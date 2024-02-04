@@ -1,0 +1,9 @@
+{
+	"dependencies": {
+		"moment": "^2.30.1",
+		"uuid": "^9.0.1",
+		"@firebase/firestore": "10.7.1",
+		"@firebase/auth": "10.7.1",
+		"@firebase/storage": "10.7.1"
+	}
+}
