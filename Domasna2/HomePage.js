@@ -7,12 +7,20 @@ import {
 	TouchableOpacity,
 	ScrollView,
 	StyleSheet,
+	Touchable,
+	ImageBackground,
 } from 'react-native';
+import Sidebar from './Sidebar';
 import { AuthContext } from './context/AuthContext';
-import Add from './image/addAvatar.png';
+import { NavigationContainer } from '@react-navigation/native';
 import 'react-native-get-random-values';
+import {
+	createDrawerNavigator,
+	DrawerContentScrollView,
+	DrawerItemList,
+} from '@react-navigation/drawer';
 import * as ImagePicker from 'expo-image-picker';
-import Add3 from './image/Testot.png';
+import * as FileSystem from 'expo-file-system';
 import {
 	arrayUnion,
 	doc,
@@ -40,12 +48,28 @@ function HomePage({ navigation }) {
 	const [fileot, setFileot] = useState(null);
 	const [novfile, setNovfile] = useState(null);
 	const { curruser } = useContext(AuthContext);
+	const [uploading, setUploading] = useState(false);
 	const [post, setPost] = useState([]);
 	const [profilepost, setProfilepost] = useState([]);
 	const [likesarray, setLikesarray] = useState([]);
 	const [uniqot, setUniqot] = useState('');
 	const { dispatch } = useContext(ChatContext);
 	const [user, setUser] = useState(null);
+	const Drawer = createDrawerNavigator();
+	const [chats, setChats] = useState([]);
+	useEffect(() => {
+		const getChats = () => {
+			const unsub = onSnapshot(doc(db, 'userChats', curruser.uid), (doc) => {
+				console.log('Current data: ', doc.data());
+				setChats(doc.data());
+			});
+			return () => {
+				unsub();
+			};
+		};
+		curruser.uid && getChats();
+	}, [curruser.uid]);
+
 	useEffect(() => {
 		if (user != null) {
 			dispatch({ type: 'CHANGE_USER', payload: user });
@@ -120,36 +144,63 @@ function HomePage({ navigation }) {
 			console.log('Tuka e problemot');
 		}
 	}, []);
+	useEffect(() => {
+		console.log(curruser);
+	}, []);
 	const pickImage = async () => {
 		// No permissions request is necessary for launching the image library
-		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
-			allowsEditing: true,
-			aspect: [4, 3],
-			quality: 1,
-		});
+		try {
+			let result = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.All,
+				allowsEditing: true,
+				aspect: [4, 3],
+				quality: 1,
+			});
 
-		console.log(result);
+			console.log(result);
 
-		if (!result.canceled) {
-			setFileot(result.assets[0].uri);
+			if (!result.canceled) {
+				const response = await fetch(result.assets[0].uri);
+
+				if (!response.ok) {
+					throw new Error('Failed to fetch image');
+				}
+
+				const blob = await response.blob();
+				console.log('fechna');
+				setFileot(blob);
+			}
+		} catch (error) {
+			console.error('Error picking image:', error);
 		}
 	};
 	const pickImage2 = async () => {
-		// No permissions request is necessary for launching the image library
-		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
-			allowsEditing: true,
-			aspect: [4, 3],
-			quality: 1,
-		});
+		try {
+			let result = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.All,
+				allowsEditing: true,
+				aspect: [4, 3],
+				quality: 1,
+			});
 
-		console.log(result);
+			console.log(result);
 
-		if (!result.canceled) {
-			setNovfile(result.assets[0].uri);
+			if (!result.canceled) {
+				const response = await fetch(result.assets[0].uri);
+
+				if (!response.ok) {
+					throw new Error('Failed to fetch image');
+				}
+
+				const blob = await response.blob();
+				console.log('fechna');
+				setNovfile(blob);
+			}
+		} catch (error) {
+			console.error('Error picking image:', error);
 		}
 	};
+
 	const handleLikes = async (po) => {
 		const postRef = doc(db, 'posts', 'homepagepostovi');
 		const postRef2 = doc(db, 'profilepages', curruser.uid);
@@ -373,7 +424,7 @@ function HomePage({ navigation }) {
 		}
 	};
 	const handleprofile = () => {
-		navigation.navigate('UserProfilePages');
+		navigation.navigate('FriendsProfilePages');
 	};
 	const handleSearch = async (po) => {
 		console.log(po.displayName);
@@ -651,219 +702,330 @@ function HomePage({ navigation }) {
 	};
 
 	return (
-		<ScrollView contentContainerStyle={styles.homepage}>
-			<View style={styles.logoInputWrapper}>
-				<Image style={styles.logoicon} source={require('./image/logo.png')} />
-			</View>
-			<View style={styles.borderhomepage}>
-				<View style={styles.homepage2}>
-					<View style={styles.spanslika}>
-						<TouchableOpacity onPress={handleprofile}>
-							<Image source={curruser.photoURL} style={styles.searchimg} />
-						</TouchableOpacity>
-						<View style={{ alignItems: 'center' }}>
-							<Text style={{ fontWeight: 'bold' }}>{curruser.displayName}</Text>
-						</View>
-					</View>
-					<TextInput
-						style={styles.homepage2Input}
-						placeholder="Write a post"
-						onChangeText={(input) => setText(input)}
-						value={text}
-					/>
-					<TouchableOpacity onPress={pickImage}>
-						<View style={styles.add}>
-							<Image
-								source={require('./image/add.png')}
-								style={styles.searchimg2}
-							/>
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity onPress={handlesubmit}>
+		<ImageBackground
+			source={require('./image/background.png')}
+			style={{ flex: 1, resizeMode: 'cover', width: '100%', height: '100%' }}
+		>
+			<View style={{ flexDirection: 'row', height: '100%' }}>
+				<ScrollView
+					contentContainerStyle={styles.homepage}
+					showsVerticalScrollIndicator={false}
+				>
+					<View style={styles.logoInputWrapper}>
 						<Image
-							source={require('./image/done.png')}
-							style={styles.searchimg2}
+							style={styles.logoicon}
+							source={require('./image/logo.png')}
 						/>
-					</TouchableOpacity>
-				</View>
-			</View>
-			<ScrollView>
-				{post &&
-					post
-						.sort((b, a) => a.date - b.date)
-						.map((po) => (
-							<View style={styles.borderhomepage2} key={po.uid}>
-								<View style={styles.postdetails}>
-									<View style={styles.spanslika}>
-										<TouchableOpacity onPress={() => handleSearch(po)}>
-											<Image source={po.photoURL} style={styles.searchimg} />
-										</TouchableOpacity>
-									</View>
-									<View style={styles.datenname}>
-										<Text>
-											<Text style={{ fontWeight: 'bold', fontSize: 16 }}>
-												{po.displayName}
-											</Text>
-										</Text>
-										<Text style={{ fontSize: 12 }}>
-											{moment(po.date.toDate()).calendar()}
-										</Text>
-									</View>
-								</View>
-								<View style={styles.postcontent}>
-									<Text style={{ paddingHorizontal: 3 }}>{po.text}</Text>
-									{po.img && (
-										<Image
-											source={{ uri: po.img }}
-											style={styles.postimage}
-											onError={(error) => console.error('Image loading error:')}
-										/>
-									)}
-									<View style={styles.postbutton}>
-										<View style={styles.postbutton2}>
-											{likesarray.some((book) => book.id === po.uid) ? (
-												likesarray.find(
-													(book) =>
-														book.id === po.uid && book.uid === curruser.uid
-												)?.liked ? (
-													<TouchableOpacity onPress={() => handleLikes(po)}>
-														<Image
-															source={require('./image/like_kliknato.png')}
-															style={styles.searchimg2}
-														/>
-													</TouchableOpacity>
-												) : (
-													<TouchableOpacity onPress={() => handleLikes(po)}>
-														<Image
-															source={require('./image/like.png')}
-															style={styles.searchimg2}
-														/>
-													</TouchableOpacity>
-												)
-											) : (
-												<TouchableOpacity onPress={() => handleLikes(po)}>
-													<Image
-														source={require('./image/like.png')}
-														style={styles.searchimg2}
-													/>
-												</TouchableOpacity>
-											)}
-											<Text style={{ marginBottom: 8 }}>{po.count}</Text>
-											{po.senderId === curruser.uid && (
-												<TouchableOpacity onPress={() => handledelete(po)}>
-													<Image
-														source={require('./image/delete.png')}
-														style={styles.searchimg2}
-													/>
-												</TouchableOpacity>
-											)}
-											<TouchableOpacity onPress={() => handlereplys(po)}>
-												<Image
-													source={require('./image/reply.png')}
-													style={styles.searchimg2}
-												/>
-											</TouchableOpacity>
-										</View>
-										{po.liked && (
-											<View style={styles.postreply}>
-												<View
-													style={{
-														justifyContent: 'space-between',
-														flexDirection: 'row',
-														gap: 10,
-													}}
-												>
-													<View style={{ flexDirection: 'row' }}>
-														<Image
-															source={curruser.photoURL}
-															style={styles.searchimg3}
-														/>
-														<TextInput
-															style={styles.textInput1}
-															placeholder="Reply"
-															onChangeText={(input) => setReply(input)}
-															value={reply}
-														/>
-													</View>
-													<View style={{ flexDirection: 'row' }}>
-														<TouchableOpacity onPress={pickImage}>
-															<Image
-																source={require('./image/add.png')}
-																style={styles.searchimg2}
-															/>
-														</TouchableOpacity>
-														<TouchableOpacity onPress={() => handlecancel(po)}>
-															<Image
-																source={require('./image/cancel.png')}
-																style={styles.searchimg2}
-															/>
-														</TouchableOpacity>
-														<TouchableOpacity onPress={() => handlesend(po)}>
-															<Image
-																source={require('./image/done.png')}
-																style={styles.searchimg2}
-															/>
-														</TouchableOpacity>
-													</View>
-												</View>
-											</View>
-										)}
-									</View>
-									{po.replyArray &&
-										po.replyArray
-											.sort((b, a) => a.date - b.date)
-											.reverse()
-											.map((rep) => (
-												<View style={styles.replyot} key={rep.date.toMillis()}>
-													<TouchableOpacity onPress={() => handleSearch(rep)}>
-														<Image
-															source={rep.photoURL}
-															style={styles.searchimg2}
-														/>
-													</TouchableOpacity>
-													<View style={styles.chatbubble}>
-														<Text>
-															<Text
-																style={{ fontWeight: 'bold', fontSize: 12 }}
-															>
-																{rep.displayName}
-															</Text>
-														</Text>
-														{rep.text && (
-															<Text style={{ marginTop: 3, marginBottom: 3 }}>
-																{rep.text}
-															</Text>
-														)}
-														{rep.img && (
-															<Image
-																source={{ uri: rep.img }}
-																style={styles.postimage2}
-															/>
-														)}
-														<Text style={{ fontSize: 9, paddingBottom: 2 }}>
-															{moment(rep.date.toDate()).calendar()}
-														</Text>
-													</View>
-												</View>
-											))}
+					</View>
+					<View style={styles.borderhomepage}>
+						<View style={styles.homepage2}>
+							<View style={styles.spanslika}>
+								<TouchableOpacity onPress={handleprofile}>
+									<Image source={curruser.photoURL} style={styles.searchimg} />
+								</TouchableOpacity>
+								<View style={{ alignItems: 'center' }}>
+									<Text style={{ fontWeight: 'bold' }}>
+										{curruser.displayName}
+									</Text>
 								</View>
 							</View>
-						))}
-			</ScrollView>
-		</ScrollView>
+							<TextInput
+								style={styles.homepage2Input}
+								placeholder="Write a post"
+								onChangeText={(input) => setText(input)}
+								value={text}
+							/>
+							<TouchableOpacity onPress={pickImage}>
+								<View style={styles.add}>
+									<Image
+										source={require('./image/add.png')}
+										style={styles.searchimg2}
+									/>
+								</View>
+							</TouchableOpacity>
+							<TouchableOpacity onPress={handlesubmit}>
+								<Image
+									source={require('./image/done.png')}
+									style={styles.searchimg2}
+								/>
+							</TouchableOpacity>
+						</View>
+					</View>
+					<ScrollView showsVerticalScrollIndicator={false}>
+						{post &&
+							post
+								.sort((b, a) => a.date - b.date)
+								.map((po) => (
+									<View style={styles.borderhomepage2} key={po.uid}>
+										<View style={styles.postdetails}>
+											<View style={styles.spanslika}>
+												<TouchableOpacity onPress={() => handleSearch(po)}>
+													<Image
+														source={po.photoURL}
+														style={styles.searchimg}
+													/>
+												</TouchableOpacity>
+											</View>
+											<View style={styles.datenname}>
+												<Text>
+													<Text style={{ fontWeight: 'bold', fontSize: 16 }}>
+														{po.displayName}
+													</Text>
+												</Text>
+												<Text style={{ fontSize: 12 }}>
+													{moment(po.date.toDate()).calendar()}
+												</Text>
+											</View>
+										</View>
+										<View style={styles.postcontent}>
+											<Text style={{ paddingHorizontal: 3 }}>{po.text}</Text>
+											{po.img && (
+												<Image
+													source={{ uri: po.img }}
+													style={styles.postimage}
+												/>
+											)}
+											<View style={styles.postbutton}>
+												<View style={styles.postbutton2}>
+													{likesarray.some((book) => book.id === po.uid) ? (
+														likesarray.find(
+															(book) =>
+																book.id === po.uid && book.uid === curruser.uid
+														)?.liked ? (
+															<TouchableOpacity onPress={() => handleLikes(po)}>
+																<Image
+																	source={require('./image/like_kliknato.png')}
+																	style={styles.searchimg2}
+																/>
+															</TouchableOpacity>
+														) : (
+															<TouchableOpacity onPress={() => handleLikes(po)}>
+																<Image
+																	source={require('./image/like.png')}
+																	style={styles.searchimg2}
+																/>
+															</TouchableOpacity>
+														)
+													) : (
+														<TouchableOpacity onPress={() => handleLikes(po)}>
+															<Image
+																source={require('./image/like.png')}
+																style={styles.searchimg2}
+															/>
+														</TouchableOpacity>
+													)}
+													<Text style={{ marginBottom: 8 }}>{po.count}</Text>
+													{po.senderId === curruser.uid && (
+														<TouchableOpacity onPress={() => handledelete(po)}>
+															<Image
+																source={require('./image/delete.png')}
+																style={styles.searchimg2}
+															/>
+														</TouchableOpacity>
+													)}
+													<TouchableOpacity onPress={() => handlereplys(po)}>
+														<Image
+															source={require('./image/reply.png')}
+															style={styles.searchimg2}
+														/>
+													</TouchableOpacity>
+												</View>
+												{po.liked && (
+													<View style={styles.postreply}>
+														<View
+															style={{
+																justifyContent: 'space-between',
+																flexDirection: 'row',
+																gap: 10,
+															}}
+														>
+															<View style={{ flexDirection: 'row' }}>
+																<Image
+																	source={curruser.photoURL}
+																	style={styles.searchimg3}
+																/>
+																<TextInput
+																	style={styles.textInput1}
+																	placeholder="Reply"
+																	onChangeText={(input) => setReply(input)}
+																	value={reply}
+																/>
+															</View>
+															<View style={{ flexDirection: 'row' }}>
+																<TouchableOpacity onPress={pickImage2}>
+																	<Image
+																		source={require('./image/add.png')}
+																		style={styles.searchimg2}
+																	/>
+																</TouchableOpacity>
+																<TouchableOpacity
+																	onPress={() => handlecancel(po)}
+																>
+																	<Image
+																		source={require('./image/cancel.png')}
+																		style={styles.searchimg2}
+																	/>
+																</TouchableOpacity>
+																<TouchableOpacity
+																	onPress={() => handlesend(po)}
+																>
+																	<Image
+																		source={require('./image/done.png')}
+																		style={styles.searchimg2}
+																	/>
+																</TouchableOpacity>
+															</View>
+														</View>
+													</View>
+												)}
+											</View>
+											{po.replyArray &&
+												po.replyArray
+													.sort((b, a) => a.date - b.date)
+													.reverse()
+													.map((rep) => (
+														<View
+															style={styles.replyot}
+															key={rep.date.toMillis()}
+														>
+															<TouchableOpacity
+																onPress={() => handleSearch(rep)}
+															>
+																<Image
+																	source={rep.photoURL}
+																	style={styles.searchimg2}
+																/>
+															</TouchableOpacity>
+															<View style={styles.chatbubble}>
+																<Text>
+																	<Text
+																		style={{ fontWeight: 'bold', fontSize: 12 }}
+																	>
+																		{rep.displayName}
+																	</Text>
+																</Text>
+																{rep.text && (
+																	<Text
+																		style={{ marginTop: 3, marginBottom: 3 }}
+																	>
+																		{rep.text}
+																	</Text>
+																)}
+																{rep.img && (
+																	<Image
+																		source={{ uri: rep.img }}
+																		style={{ width: 65, height: 50 }}
+																	/>
+																)}
+																<Text style={{ fontSize: 9, paddingBottom: 2 }}>
+																	{moment(rep.date.toDate()).calendar()}
+																</Text>
+															</View>
+														</View>
+													))}
+										</View>
+									</View>
+								))}
+					</ScrollView>
+				</ScrollView>
+				<View
+					style={{
+						flex: 1,
+						height: '100%',
+						backgroundColor: '#254257',
+						alignItems: 'center',
+						flexDirection: 'column',
+						gap: 100,
+					}}
+				>
+					<TouchableOpacity
+						onPress={() => navigation.navigate('Sidebar')}
+						style={{
+							width: 'full',
+							height: 'full',
+							backgroundColor: '#254257',
+							borderRadius: 10,
+						}}
+					>
+						<Image
+							source={require('./image/messages.png')}
+							style={styles.messagesicon}
+						/>
+					</TouchableOpacity>
+					<View
+						style={{
+							flexDirection: 'column',
+							justifyContent: 'center',
+							alignItems: 'center',
+							width: '100%',
+							gap: 20,
+						}}
+					>
+						{chats &&
+							Object.entries(chats)
+								?.sort((b, a) => a[1].date - b[1].date)
+								.map((chat) => (
+									<TouchableOpacity style={styles.userchat} key={chat[0]}>
+										<Image
+											source={chat[1].userInfo.photoURL}
+											style={styles.icons}
+										/>
+									</TouchableOpacity>
+								))}
+					</View>
+					<View
+						style={{
+							flex: 1,
+							flexDirection: 'column',
+							gap: 2,
+							justifyContent: 'flex-end',
+							marginBottom: 10,
+						}}
+					>
+						<TouchableOpacity
+							style={{
+								width: 'full',
+								height: 'full',
+								borderRadius: 10,
+							}}
+							onPress={() => navigation.navigate('MapScreen')}
+						>
+							<Image
+								source={require('./image/maps.png')}
+								style={styles.icons}
+							/>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={{}}
+							onPress={() => navigation.navigate('Login')}
+						>
+							<Image
+								source={require('./image/log out.png')}
+								style={styles.icons}
+							/>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</View>
+		</ImageBackground>
 	);
 }
-
 const styles = StyleSheet.create({
 	homepage: {
-		backgroundColor: '#fff',
 		flexDirection: 'column',
+		height: '100%',
 	},
 	searchimg3: {
 		width: 30,
 		height: 30,
 		borderRadius: 25,
 		marginRight: 4,
+		resizeMode: 'cover', // React Native equivalent for object-fit
+	},
+	icons: {
+		width: 35,
+		height: 35,
+		borderRadius: 25,
 		resizeMode: 'cover', // React Native equivalent for object-fit
 	},
 	borderhomepage: {
@@ -901,8 +1063,15 @@ const styles = StyleSheet.create({
 		marginRight: 5,
 	},
 	postimage: {
+		width: 175,
+		height: 135,
+	},
+	searchimg: {
 		width: 50,
 		height: 50,
+		borderRadius: 25, // React Native uses radius, not percentage
+		resizeMode: 'cover',
+		// There is no 'cursor' property in React Native
 	},
 	searchimg: {
 		width: 50,
@@ -935,6 +1104,7 @@ const styles = StyleSheet.create({
 		marginLeft: 15,
 	},
 	logoicon: {
+		marginTop: 25,
 		width: 220,
 		height: 100,
 	},
@@ -950,6 +1120,7 @@ const styles = StyleSheet.create({
 	postcontent: {
 		flexDirection: 'column',
 		marginLeft: 10,
+		maxHeight: '100%',
 		marginTop: 10,
 		marginBottom: 10,
 	},
@@ -1001,6 +1172,13 @@ const styles = StyleSheet.create({
 	searchimg2: {
 		width: 30,
 		height: 30,
+		margin: 2,
+		borderRadius: 25,
+		resizeMode: 'cover', // React Native equivalent for object-fit
+	},
+	messagesicon: {
+		width: 50,
+		height: 50,
 		margin: 2,
 		borderRadius: 25,
 		resizeMode: 'cover', // React Native equivalent for object-fit

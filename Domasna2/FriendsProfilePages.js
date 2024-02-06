@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react';
-import Add3 from './image/Testot.png';
 import { AuthContext } from './context/AuthContext';
 import {
 	arrayRemove,
@@ -410,17 +409,29 @@ function FriendsProfilePages({ navigation }) {
 	};
 	const pickImage = async () => {
 		// No permissions request is necessary for launching the image library
-		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
-			allowsEditing: true,
-			aspect: [4, 3],
-			quality: 1,
-		});
+		try {
+			let result = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.All,
+				allowsEditing: true,
+				aspect: [4, 3],
+				quality: 1,
+			});
 
-		console.log(result);
+			console.log(result);
 
-		if (!result.canceled) {
-			setNovfile(result.assets[0].uri);
+			if (!result.canceled) {
+				const response = await fetch(result.assets[0].uri);
+
+				if (!response.ok) {
+					throw new Error('Failed to fetch image');
+				}
+
+				const blob = await response.blob();
+				console.log('fechna');
+				setNovfile(blob);
+			}
+		} catch (error) {
+			console.error('Error picking image:', error);
 		}
 	};
 	const handleSearch = async (po) => {
@@ -443,83 +454,100 @@ function FriendsProfilePages({ navigation }) {
 		}
 	};
 	return (
-		<ScrollView contentContainerStyle={styles.userProfilePage}>
-			<ImageBackground
-				source={require('./image/cover.png')}
-				style={{ flex: 1, resizeMode: 'cover' }}
+		<ImageBackground
+			source={require('./image/background.png')}
+			style={{ flex: 1, resizeMode: 'cover', width: '100%', height: '100%' }}
+		>
+			<ScrollView
+				contentContainerStyle={styles.userProfilePage}
+				showsVerticalScrollIndicator={false}
 			>
-				<View style={styles.background}>
-					<Image source={data.user.photoURL} style={styles.deProfilePhoto} />
-					<Text>
-						<Text style={{ fontWeight: 'bold', fontSize: 18 }}>
-							{data.user.displayName}
-						</Text>
-					</Text>
-					{data.user.uid != curruser.uid && (
-						<TouchableOpacity>
-							<Text
-								style={{
-									backgroundColor: '#afa1db',
-									borderRadius: 20,
-									padding: 5,
-									fontSize: 10,
-									shadowColor: 'black',
-									shadowOffset: { width: 5, height: 8 },
-									shadowOpacity: 0.9,
-									shadowRadius: 3,
-								}}
-							>
-								Message
+				<ImageBackground
+					source={require('./image/cover.png')}
+					style={{ flex: 1, resizeMode: 'cover' }}
+				>
+					<View style={styles.background}>
+						<Image source={data.user.photoURL} style={styles.deProfilePhoto} />
+						<Text>
+							<Text style={{ fontWeight: 'bold', fontSize: 18 }}>
+								{data.user.displayName}
 							</Text>
-						</TouchableOpacity>
-					)}
-				</View>
-			</ImageBackground>
-			<ScrollView>
-				{profilepost &&
-					profilepost
-						.sort((b, a) => a.date - b.date)
-						.map((po) => (
-							<View style={styles.borderhomepage2} key={po.uid}>
-								<View style={styles.postdetails}>
-									<View style={styles.spanslika}>
-										<TouchableOpacity onPress={() => handleSearch(po)}>
-											<Image source={po.photoURL} style={styles.searchimg} />
-										</TouchableOpacity>
-									</View>
-									<View style={styles.datenname}>
-										<Text>
-											<Text style={{ fontWeight: 'bold', fontSize: 16 }}>
-												{po.displayName}
+						</Text>
+						{data.user.uid != curruser.uid && (
+							<TouchableOpacity>
+								<Text
+									style={{
+										backgroundColor: '#afa1db',
+										borderRadius: 20,
+										padding: 5,
+										fontSize: 10,
+										shadowColor: 'black',
+										shadowOffset: { width: 5, height: 8 },
+										shadowOpacity: 0.9,
+										shadowRadius: 3,
+									}}
+								>
+									Message
+								</Text>
+							</TouchableOpacity>
+						)}
+					</View>
+				</ImageBackground>
+				<ScrollView showsVerticalScrollIndicator={false}>
+					{profilepost &&
+						profilepost
+							.sort((b, a) => a.date - b.date)
+							.map((po) => (
+								<View style={styles.borderhomepage2} key={po.uid}>
+									<View style={styles.postdetails}>
+										<View style={styles.spanslika}>
+											<TouchableOpacity onPress={() => handleSearch(po)}>
+												<Image source={po.photoURL} style={styles.searchimg} />
+											</TouchableOpacity>
+										</View>
+										<View style={styles.datenname}>
+											<Text>
+												<Text style={{ fontWeight: 'bold', fontSize: 16 }}>
+													{po.displayName}
+												</Text>
 											</Text>
-										</Text>
-										<Text style={{ fontSize: 12 }}>
-											{moment(po.date.toDate()).calendar()}
-										</Text>
+											<Text style={{ fontSize: 12 }}>
+												{moment(po.date.toDate()).calendar()}
+											</Text>
+										</View>
 									</View>
-								</View>
-								<View style={styles.postcontent}>
-									<Text style={{ paddingHorizontal: 3 }}>{po.text}</Text>
-									{po.img && (
-										<Image
-											source={{ uri: po.img }}
-											style={styles.postimage}
-											onError={(error) => console.error('Image loading error:')}
-										/>
-									)}
-									<View style={styles.postbutton}>
-										<View style={styles.postbutton2}>
-											{likesarray.some((book) => book.id === po.uid) ? (
-												likesarray.find(
-													(book) =>
-														book.id === po.uid && book.uid === curruser.uid
-												)?.liked ? (
-													<TouchableOpacity onPress={() => handleLikes(po)}>
-														<Image
-															source={require('./image/like_kliknato.png')}
-															style={styles.searchimg2}
-														/>
-													</TouchableOpacity>
+									<View style={styles.postcontent}>
+										<Text style={{ paddingHorizontal: 3 }}>{po.text}</Text>
+										{po.img && (
+											<Image
+												source={{ uri: po.img }}
+												style={styles.postimage}
+												onError={(error) =>
+													console.error('Image loading error:')
+												}
+											/>
+										)}
+										<View style={styles.postbutton}>
+											<View style={styles.postbutton2}>
+												{likesarray.some((book) => book.id === po.uid) ? (
+													likesarray.find(
+														(book) =>
+															book.id === po.uid && book.uid === curruser.uid
+													)?.liked ? (
+														<TouchableOpacity onPress={() => handleLikes(po)}>
+															<Image
+																source={require('./image/like_kliknato.png')}
+																style={styles.searchimg2}
+															/>
+														</TouchableOpacity>
+													) : (
+														<TouchableOpacity onPress={() => handleLikes(po)}>
+															<Image
+																source={require('./image/like.png')}
+																style={styles.searchimg2}
+															/>
+														</TouchableOpacity>
+													)
 												) : (
 													<TouchableOpacity onPress={() => handleLikes(po)}>
 														<Image
@@ -527,123 +555,120 @@ function FriendsProfilePages({ navigation }) {
 															style={styles.searchimg2}
 														/>
 													</TouchableOpacity>
-												)
-											) : (
-												<TouchableOpacity onPress={() => handleLikes(po)}>
-													<Image
-														source={require('./image/like.png')}
-														style={styles.searchimg2}
-													/>
-												</TouchableOpacity>
-											)}
-											<Text style={{ marginBottom: 5 }}>{po.count}</Text>
-											{po.senderId === curruser.uid && (
-												<TouchableOpacity onPress={() => handledelete(po)}>
-													<Image
-														source={require('./image/delete.png')}
-														style={styles.searchimg2}
-													/>
-												</TouchableOpacity>
-											)}
-											<TouchableOpacity onPress={() => handlereplys(po)}>
-												<Image
-													source={require('./image/reply.png')}
-													style={styles.searchimg2}
-												/>
-											</TouchableOpacity>
-										</View>
-										{po.liked && (
-											<View style={styles.postreply}>
-												<View
-													style={{
-														justifyContent: 'space-between',
-														flexDirection: 'row',
-														gap: 10,
-													}}
-												>
-													<View style={{ flexDirection: 'row' }}>
+												)}
+												<Text style={{ marginBottom: 5 }}>{po.count}</Text>
+												{po.senderId === curruser.uid && (
+													<TouchableOpacity onPress={() => handledelete(po)}>
 														<Image
-															source={curruser.photoURL}
-															style={styles.searchimg3}
-														/>
-														<TextInput
-															style={styles.textInput1}
-															placeholder="Reply"
-															onChangeText={(input) => setReply(input)}
-															value={reply}
-														/>
-													</View>
-													<View style={{ flexDirection: 'row' }}>
-														<TouchableOpacity onPress={pickImage}>
-															<Image
-																source={require('./image/add.png')}
-																style={styles.searchimg2}
-															/>
-														</TouchableOpacity>
-														<TouchableOpacity onPress={() => handlecancel(po)}>
-															<Image
-																source={require('./image/cancel.png')}
-																style={styles.searchimg2}
-															/>
-														</TouchableOpacity>
-														<TouchableOpacity onPress={() => handlesend(po)}>
-															<Image
-																source={require('./image/done.png')}
-																style={styles.searchimg2}
-															/>
-														</TouchableOpacity>
-													</View>
-												</View>
-											</View>
-										)}
-									</View>
-									{po.replyArray &&
-										po.replyArray
-											.sort((b, a) => a.date - b.date)
-											.reverse()
-											.map((rep) => (
-												<View style={styles.replyot} key={rep.date.toMillis()}>
-													<TouchableOpacity onPress={() => handleSearch(rep)}>
-														<Image
-															source={rep.photoURL}
+															source={require('./image/delete.png')}
 															style={styles.searchimg2}
 														/>
 													</TouchableOpacity>
-													<View style={styles.chatbubble}>
-														<Text>
-															<Text
-																style={{ fontWeight: 'bold', fontSize: 12 }}
-															>
-																{rep.displayName}
-															</Text>
-														</Text>
-														{rep.text && (
-															<Text style={{ marginTop: 3, marginBottom: 3 }}>
-																{rep.text}
-															</Text>
-														)}
-														{rep.img && (
+												)}
+												<TouchableOpacity onPress={() => handlereplys(po)}>
+													<Image
+														source={require('./image/reply.png')}
+														style={styles.searchimg2}
+													/>
+												</TouchableOpacity>
+											</View>
+											{po.liked && (
+												<View style={styles.postreply}>
+													<View
+														style={{
+															justifyContent: 'space-between',
+															flexDirection: 'row',
+															gap: 10,
+														}}
+													>
+														<View style={{ flexDirection: 'row' }}>
 															<Image
-																source={{ uri: rep.img }}
-																style={styles.postimage2}
+																source={curruser.photoURL}
+																style={styles.searchimg3}
 															/>
-														)}
-														<Text style={{ fontSize: 9, paddingBottom: 2 }}>
-															{moment(rep.date.toDate()).calendar()}
-														</Text>
+															<TextInput
+																style={styles.textInput1}
+																placeholder="Reply"
+																onChangeText={(input) => setReply(input)}
+																value={reply}
+															/>
+														</View>
+														<View style={{ flexDirection: 'row' }}>
+															<TouchableOpacity onPress={pickImage}>
+																<Image
+																	source={require('./image/add.png')}
+																	style={styles.searchimg2}
+																/>
+															</TouchableOpacity>
+															<TouchableOpacity
+																onPress={() => handlecancel(po)}
+															>
+																<Image
+																	source={require('./image/cancel.png')}
+																	style={styles.searchimg2}
+																/>
+															</TouchableOpacity>
+															<TouchableOpacity onPress={() => handlesend(po)}>
+																<Image
+																	source={require('./image/done.png')}
+																	style={styles.searchimg2}
+																/>
+															</TouchableOpacity>
+														</View>
 													</View>
 												</View>
-											))}
+											)}
+										</View>
+										{po.replyArray &&
+											po.replyArray
+												.sort((b, a) => a.date - b.date)
+												.reverse()
+												.map((rep) => (
+													<View
+														style={styles.replyot}
+														key={rep.date.toMillis()}
+													>
+														<TouchableOpacity onPress={() => handleSearch(rep)}>
+															<Image
+																source={rep.photoURL}
+																style={styles.searchimg2}
+															/>
+														</TouchableOpacity>
+														<View style={styles.chatbubble}>
+															<Text>
+																<Text
+																	style={{ fontWeight: 'bold', fontSize: 12 }}
+																>
+																	{rep.displayName}
+																</Text>
+															</Text>
+															{rep.text && (
+																<Text style={{ marginTop: 3, marginBottom: 3 }}>
+																	{rep.text}
+																</Text>
+															)}
+															{rep.img && (
+																<Image
+																	source={{ uri: rep.img }}
+																	style={{ width: 65, height: 50 }}
+																/>
+															)}
+															<Text style={{ fontSize: 9, paddingBottom: 2 }}>
+																{moment(rep.date.toDate()).calendar()}
+															</Text>
+														</View>
+													</View>
+												))}
+									</View>
 								</View>
-							</View>
-						))}
+							))}
+				</ScrollView>
 			</ScrollView>
-		</ScrollView>
+		</ImageBackground>
 	);
 }
 const styles = StyleSheet.create({
 	userProfilePage: {
-		backgroundColor: '#fff',
 		borderBottomLeftRadius: 7,
 		borderRightWidth: 1,
 		borderRightColor: 'gray',
@@ -700,8 +725,8 @@ const styles = StyleSheet.create({
 		marginRight: 5,
 	},
 	postimage: {
-		width: 50,
-		height: 50,
+		width: 175,
+		height: 135,
 	},
 	searchimg: {
 		width: 50,

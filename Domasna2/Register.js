@@ -5,6 +5,7 @@ import {
 	TextInput,
 	TouchableOpacity,
 	Image,
+	ImageBackground,
 	Picker,
 } from 'react-native';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
@@ -19,11 +20,13 @@ import { useFonts } from 'expo-font';
 
 function Register({ navigation }) {
 	const [displayName, setDisplayName] = useState('');
+	const [displaySurrName, setDisplaySurrName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [gender, setGender] = useState('male'); // Assuming a default value
 	const [file, setFile] = useState(null);
 	const [err, setErr] = useState(false);
+	const [dali, setDali] = useState(false);
 
 	const [loaded] = useFonts({
 		InnerBeauty: require('./assets/fonts/InnerBeauty-nRKaV.ttf'),
@@ -36,17 +39,29 @@ function Register({ navigation }) {
 
 	const pickImage = async () => {
 		// No permissions request is necessary for launching the image library
-		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
-			allowsEditing: true,
-			aspect: [4, 3],
-			quality: 1,
-		});
+		try {
+			let result = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.All,
+				allowsEditing: true,
+				aspect: [4, 3],
+				quality: 1,
+			});
 
-		console.log(result);
+			console.log(result);
 
-		if (!result.canceled) {
-			setFile(result.assets[0].uri);
+			if (!result.canceled) {
+				const response = await fetch(result.assets[0].uri);
+
+				if (!response.ok) {
+					throw new Error('Failed to fetch image');
+				}
+
+				const blob = await response.blob();
+				console.log('fechna');
+				setFile(blob);
+			}
+		} catch (error) {
+			console.error('Error picking image:', error);
 		}
 	};
 
@@ -57,6 +72,7 @@ function Register({ navigation }) {
 			const storageRef = ref(storage, displayName);
 
 			if (file) {
+				setDali(true);
 				const uploadTask = uploadBytesResumable(storageRef, file);
 				uploadTask.on(
 					'state_changed',
@@ -75,11 +91,12 @@ function Register({ navigation }) {
 							};
 
 							await updateProfile(res.user, profileData);
-
 							await setDoc(doc(db, 'users', res.user.uid), {
 								uid: res.user.uid,
 								displayName,
+								displaySurrName,
 								email,
+								daliuri: dali,
 								photoURL: profileData.photoURL,
 							});
 
@@ -109,7 +126,9 @@ function Register({ navigation }) {
 				await setDoc(doc(db, 'users', res.user.uid), {
 					uid: res.user.uid,
 					displayName,
+					displaySurrName,
 					email,
+					daliuri: dali,
 					photoURL: updatedUser.photoURL || profileData.photoURL,
 				});
 
@@ -118,86 +137,101 @@ function Register({ navigation }) {
 				console.log('User profile and data updated successfully.');
 				setErr(false);
 			}
+			setFile(null);
 		} catch (authError) {
 			console.error('Error creating user:', authError);
 			setErr(true);
 		}
+		setDali(false);
 		navigation.navigate('HomePage');
 	};
 
 	return (
-		<View style={styles.container}>
-			<ScrollView contentContainerStyle={styles.formWrapper}>
-				<View style={styles.logoInputWrapper}>
-					<Image style={styles.logoicon} source={require('./image/logo.png')} />
-				</View>
-				<View style={styles.pomosen}>
-					<View style={styles.fileInputWrapper}>
-						<TouchableOpacity
-							style={styles.fileInputWrapper}
-							onPress={pickImage}
-						>
-							<Image
-								style={styles.fileInputIcon}
-								source={require('./image/photo_icon.png')}
-							/>
-						</TouchableOpacity>
-					</View>
-
-					<View style={styles.pomosen1}>
-						<TextInput
-							style={styles.input1}
-							placeholder="Name"
-							placeholderTextColor="#d6d6d6"
-							value={displayName}
-							onChangeText={(text) => setDisplayName(text)}
-						/>
-						<TextInput
-							style={styles.input1}
-							placeholder="Surname"
-							placeholderTextColor="#d6d6d6"
-						/>
-					</View>
-				</View>
-				<TextInput
-					style={styles.input}
-					placeholder="email"
-					placeholderTextColor="#d6d6d6"
-					value={email}
-					onChangeText={(text) => setEmail(text)}
-				/>
-				<TextInput
-					style={styles.input}
-					placeholder="password"
-					placeholderTextColor="#d6d6d6"
-					secureTextEntry
-					value={password}
-					onChangeText={(text) => setPassword(text)}
-				/>
-				<TextInput
-					style={styles.input}
-					placeholder="gender"
-					value={gender}
-					onChangeText={(text) => setGender(text)}
-				/>
-
-				<TouchableOpacity style={styles.button} onPress={handlesubmit}>
-					<Text style={styles.buttonText}>Save</Text>
-				</TouchableOpacity>
-				{err && <Text style={styles.errorText}>Something went wrong</Text>}
-				<View style={styles.linii}>
-					<View style={styles.line}></View>
-					<Text style={styles.orText}> or </Text>
-					<View style={styles.line}></View>
-				</View>
-				<TouchableOpacity
-					style={styles.loginLink}
-					onPress={() => navigation.navigate('Login')}
+		<ImageBackground
+			source={require('./image/background.png')}
+			style={{ flex: 1, resizeMode: 'cover', width: '100%', height: '100%' }}
+		>
+			<View style={styles.container}>
+				<ScrollView
+					contentContainerStyle={styles.formWrapper}
+					showsVerticalScrollIndicator={false}
 				>
-					<Text style={styles.buttonText}>Login</Text>
-				</TouchableOpacity>
-			</ScrollView>
-		</View>
+					<View style={styles.logoInputWrapper}>
+						<Image
+							style={styles.logoicon}
+							source={require('./image/logo.png')}
+						/>
+					</View>
+					<View style={styles.pomosen}>
+						<View style={styles.fileInputWrapper}>
+							<TouchableOpacity
+								style={styles.fileInputWrapper}
+								onPress={pickImage}
+							>
+								<Image
+									style={styles.fileInputIcon}
+									source={require('./image/photo_icon.png')}
+								/>
+							</TouchableOpacity>
+						</View>
+
+						<View style={styles.pomosen1}>
+							<TextInput
+								style={styles.input1}
+								placeholder="Name"
+								placeholderTextColor="#d6d6d6"
+								value={displayName}
+								onChangeText={(text) => setDisplayName(text)}
+							/>
+							<TextInput
+								style={styles.input1}
+								placeholder="Surname"
+								placeholderTextColor="#d6d6d6"
+								value={displaySurrName}
+								onChangeText={(text) => setDisplaySurrName(text)}
+							/>
+						</View>
+					</View>
+					<TextInput
+						style={styles.input}
+						placeholder="email"
+						placeholderTextColor="#d6d6d6"
+						value={email}
+						onChangeText={(text) => setEmail(text)}
+					/>
+					<TextInput
+						style={styles.input}
+						placeholder="password"
+						placeholderTextColor="#d6d6d6"
+						secureTextEntry
+						value={password}
+						onChangeText={(text) => setPassword(text)}
+					/>
+					<TextInput
+						style={styles.input}
+						placeholder="gender"
+						value={gender}
+						onChangeText={(text) => setGender(text)}
+					/>
+
+					<TouchableOpacity style={styles.button} onPress={handlesubmit}>
+						<Text style={styles.buttonText}>Save</Text>
+					</TouchableOpacity>
+					{err && <Text style={styles.errorText}>Something went wrong</Text>}
+					<View style={styles.linii}>
+						<View style={styles.line}></View>
+						<Text style={styles.orText}> or </Text>
+						<View style={styles.line}></View>
+					</View>
+					<TouchableOpacity
+						style={styles.loginLink}
+						onPress={() => navigation.navigate('Login')}
+					>
+						<Text style={styles.buttonText}>Login</Text>
+					</TouchableOpacity>
+				</ScrollView>
+			</View>
+		</ImageBackground>
 	);
 }
 
@@ -214,13 +248,12 @@ const styles = {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: '#fff',
 	},
 	pomosen: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		paddingHorizontal: 20,
-		width: '100%',
+		width: '90%',
 	},
 	pomosen1: {
 		flexDirection: 'column',
@@ -268,7 +301,7 @@ const styles = {
 		backgroundColor: '#254257',
 	},
 	input1: {
-		width: 225,
+		width: 215,
 		height: 40,
 		borderColor: '#fff',
 		borderRadius: 20,
@@ -297,8 +330,8 @@ const styles = {
 		marginBottom: 15,
 	},
 	fileInputIcon: {
-		width: 90,
-		height: 90,
+		width: 100,
+		height: 100,
 	},
 	logoicon: {
 		width: 220,

@@ -6,6 +6,7 @@ import {
 	TouchableOpacity,
 	Image,
 	StyleSheet,
+	ImageBackground,
 } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './firebase';
@@ -28,44 +29,52 @@ function Login({ navigation }) {
 	};
 
 	return (
-		<View style={styles.loginContainer}>
-			<View style={styles.loginWrapper}>
-				<View style={styles.logoInputWrapper}>
-					<Image style={styles.logoicon} source={require('./image/logo.png')} />
+		<ImageBackground
+			source={require('./image/background.png')}
+			style={{ flex: 1, resizeMode: 'cover', width: '100%', height: '100%' }}
+		>
+			<View style={styles.loginContainer}>
+				<View style={styles.loginWrapper}>
+					<View style={styles.logoInputWrapper}>
+						<Image
+							style={styles.logoicon}
+							source={require('./image/logo.png')}
+						/>
+					</View>
+					<TextInput
+						style={styles.input}
+						placeholder="Email"
+						placeholderTextColor="#d6d6d6"
+						keyboardType="email-address"
+						value={email}
+						onChangeText={(text) => setEmail(text)}
+					/>
+					<TextInput
+						style={styles.input}
+						placeholder="Password"
+						placeholderTextColor="#d6d6d6"
+						secureTextEntry
+						value={password}
+						onChangeText={(text) => setPassword(text)}
+					/>
+					<TouchableOpacity style={styles.button} onPress={handlesubmit}>
+						<Text style={styles.buttonText}>Log in</Text>
+					</TouchableOpacity>
+					{err && <Text style={styles.errorText}>Something went wrong</Text>}
+					<View style={styles.linii}>
+						<View style={styles.line}></View>
+						<Text style={styles.orText}> or </Text>
+						<View style={styles.line}></View>
+					</View>
+					<TouchableOpacity
+						style={styles.registerLink}
+						onPress={() => navigation.navigate('Sign up')}
+					>
+						<Text style={styles.buttonText}>Register</Text>
+					</TouchableOpacity>
 				</View>
-				<TextInput
-					style={styles.input}
-					placeholder="Email"
-					placeholderTextColor="#d6d6d6"
-					keyboardType="email-address"
-					value={email}
-					onChangeText={(text) => setEmail(text)}
-				/>
-				<TextInput
-					style={styles.input}
-					placeholder="Password"
-					placeholderTextColor="#d6d6d6"
-					secureTextEntry
-					value={password}
-					onChangeText={(text) => setPassword(text)}
-				/>
-				<TouchableOpacity style={styles.button} onPress={handlesubmit}>
-					<Text style={styles.buttonText}>Log in</Text>
-				</TouchableOpacity>
-				{err && <Text style={styles.errorText}>Something went wrong</Text>}
-				<View style={styles.linii}>
-					<View style={styles.line}></View>
-					<Text style={styles.orText}> or </Text>
-					<View style={styles.line}></View>
-				</View>
-				<TouchableOpacity
-					style={styles.registerLink}
-					onPress={() => navigation.navigate('Sign up')}
-				>
-					<Text style={styles.buttonText}>Register</Text>
-				</TouchableOpacity>
 			</View>
-		</View>
+		</ImageBackground>
 	);
 }
 
@@ -74,7 +83,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: '#fff',
 	},
 	linii: {
 		flexDirection: 'row',
@@ -124,7 +132,6 @@ const styles = StyleSheet.create({
 	input: {
 		width: 310,
 		height: 40,
-		borderColor: '#fff',
 		borderWidth: 1,
 		borderRadius: 20,
 		paddingHorizontal: 10,
