@@ -162,24 +162,24 @@ function Input(props) {
 const styles = StyleSheet.create({
 	inputContainer: {
 		height: 50,
-		backgroundColor: '#069a6a',
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 		padding: 10,
 		width: '100%',
 		flexDirection: 'row',
 		alignItems: 'center',
+		gap: 15,
 		justifyContent: 'space-between',
 	},
 	input: {
 		borderRadius: 10,
-		backgroundColor: '#9DCBE7',
+		backgroundColor: '#254257',
 		padding: 5,
-		width: 200,
+		width: 250,
 	},
 	sendContainer: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'space-between',
 		flexDirection: 'row',
+		gap: -15,
+		marginLeft: 10,
 	},
 	icon: {
 		height: 35,

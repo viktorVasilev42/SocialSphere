@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
 		gap: 10,
 	},
 	messageinfotext: {
-		backgroundColor: 'aqua',
+		backgroundColor: '#777777',
 		padding: 10,
 		borderRadius: 10,
 		marginBottom: 5,
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
 		overflowWrap: 'break-word',
 	},
 	messageinfotext2: {
-		backgroundColor: '#71e7bc',
+		backgroundColor: '#9183ba',
 		borderRadius: 10,
 		padding: 10,
 		maxWidth: '30%',
@@ -114,8 +114,6 @@ const styles = StyleSheet.create({
 		borderRadius: 20,
 		resizeMode: 'cover',
 		overflow: 'hidden',
-		borderColor: 'fuchsia',
-		borderWidth: 1,
 	},
 	novaslika: {
 		width: 100,

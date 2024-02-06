@@ -424,7 +424,7 @@ function HomePage({ navigation }) {
 		}
 	};
 	const handleprofile = () => {
-		navigation.navigate('FriendsProfilePages');
+		navigation.navigate('UserProfilePage');
 	};
 	const handleSearch = async (po) => {
 		console.log(po.displayName);
@@ -935,7 +935,7 @@ function HomePage({ navigation }) {
 						backgroundColor: '#254257',
 						alignItems: 'center',
 						flexDirection: 'column',
-						gap: 100,
+						gap: 15,
 					}}
 				>
 					<TouchableOpacity
@@ -1038,7 +1038,7 @@ const styles = StyleSheet.create({
 		width: 300,
 		height: 100,
 		borderWidth: 1,
-		borderColor: 'gray',
+		borderColor: '#fff',
 	},
 	homepage2: {
 		display: 'flex',

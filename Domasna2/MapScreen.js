@@ -22,7 +22,7 @@ const MapScreen = () => {
 
 	return (
 		<View style={styles.container}>
-			{location && (
+			{location ? (
 				<MapView
 					style={styles.map}
 					initialRegion={{
@@ -40,6 +40,10 @@ const MapScreen = () => {
 						title="Your Location"
 					/>
 				</MapView>
+			) : (
+				<View style={styles.mapPlaceholder}>
+					{/* You can add loading indicator or message here */}
+				</View>
 			)}
 		</View>
 	);
@@ -54,6 +58,12 @@ const styles = StyleSheet.create({
 	map: {
 		width: Dimensions.get('window').width,
 		height: Dimensions.get('window').height,
+	},
+	mapPlaceholder: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: 'lightgrey',
 	},
 });
 

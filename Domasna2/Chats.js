@@ -16,29 +16,35 @@ import {
 	TouchableOpacity,
 	ScrollView,
 	StyleSheet,
+	ImageBackground,
 } from 'react-native';
 import Messages from './Messages';
 
 function Chats({ navigation }) {
 	const { data } = useContext(ChatContext);
 	return (
-		<View style={styles.chat}>
-			<View style={styles.chatInfo}>
-				<Text style={{ fontWeight: 'bold', fontSize: 18 }}>
-					{data.user?.displayName}
-				</Text>
-				<TouchableOpacity
-					onPress={() => navigation.navigate('FriendsProfilePages')}
-				>
-					<Image
-						style={styles.searchimg}
-						source={require('./image/info.png')}
-					/>
-				</TouchableOpacity>
+		<ImageBackground
+			source={require('./image/background.png')}
+			style={{ flex: 1, resizeMode: 'cover', width: '100%', height: '100%' }}
+		>
+			<View style={styles.chat}>
+				<View style={styles.chatInfo}>
+					<Text style={{ fontWeight: 'bold', fontSize: 18 }}>
+						{data.user?.displayName}
+					</Text>
+					<TouchableOpacity
+						onPress={() => navigation.navigate('FriendsProfilePages')}
+					>
+						<Image
+							style={styles.searchimg}
+							source={require('./image/info.png')}
+						/>
+					</TouchableOpacity>
+				</View>
+				<Texts />
+				<Input />
 			</View>
-			<Texts />
-			<Input />
-		</View>
+		</ImageBackground>
 	);
 }
 const styles = StyleSheet.create({
@@ -46,7 +52,6 @@ const styles = StyleSheet.create({
 		display: 'flex',
 		flexDirection: 'column',
 		height: '100%',
-		backgroundColor: '#10c55f',
 		width: '100%',
 	},
 	searchimg: {
@@ -59,7 +64,7 @@ const styles = StyleSheet.create({
 		height: 50,
 		width: '100%',
 		padding: 10,
-		backgroundColor: '#4be1ae',
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',

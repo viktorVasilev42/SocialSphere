@@ -20,26 +20,25 @@ import {
 	Image,
 	TextInput,
 	TouchableOpacity,
-	ImageBackground,
 	ScrollView,
+	ImageBackground,
 	StyleSheet,
 } from 'react-native';
 import { db, storage } from './firebase';
 import moment from 'moment/moment';
-import { ChatContext } from './context/ChatContext';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 as uuid } from 'uuid';
+import { ChatContext } from './context/ChatContext';
 
-function FriendsProfilePages({ navigation }) {
+function UserProfilePage({ navigation }) {
+	const [reply, setReply] = useState('');
 	const { curruser } = useContext(AuthContext);
+	const [novfile, setNovfile] = useState(null);
 	const [profilepost, setProfilepost] = useState([]);
 	const [likesarray, setLikesarray] = useState([]);
-	const { data } = useContext(ChatContext);
-	const [post, setPost] = useState([]);
-	const [reply, setReply] = useState('');
-	const [novfile, setNovfile] = useState(null);
 	const { dispatch } = useContext(ChatContext);
 	const [user, setUser] = useState(null);
+	const [post, setPost] = useState([]);
 	useEffect(() => {
 		if (user != null) {
 			dispatch({ type: 'CHANGE_USER', payload: user });
@@ -50,7 +49,7 @@ function FriendsProfilePages({ navigation }) {
 	useEffect(() => {
 		try {
 			const updateLikes = async () => {
-				for (const postche of profilepost) {
+				for (const postche of post) {
 					try {
 						const res = await getDoc(
 							doc(db, 'likes', postche.uid + curruser.uid)
@@ -104,20 +103,43 @@ function FriendsProfilePages({ navigation }) {
 	}, []);
 	useEffect(() => {
 		try {
-			const unsub = onSnapshot(
-				doc(db, 'profilepages', data.user.uid),
-				(doc) => {
-					setProfilepost(doc.data()?.profileinfos || []);
-				}
-			);
-			console.log(data.user.displayName + 'tuj');
+			const unsub = onSnapshot(doc(db, 'profilepages', curruser.uid), (doc) => {
+				setProfilepost(doc.data()?.profileinfos || []);
+			});
 			return () => {
 				unsub();
 			};
 		} catch (err) {
 			console.log('Tuka e problemot');
 		}
-	}, [data.user.uid]);
+	}, []);
+	const pickImage = async () => {
+		// No permissions request is necessary for launching the image library
+		try {
+			let result = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.All,
+				allowsEditing: true,
+				aspect: [4, 3],
+				quality: 1,
+			});
+
+			console.log(result);
+
+			if (!result.canceled) {
+				const response = await fetch(result.assets[0].uri);
+
+				if (!response.ok) {
+					throw new Error('Failed to fetch image');
+				}
+
+				const blob = await response.blob();
+				console.log('fechna');
+				setNovfile(blob);
+			}
+		} catch (error) {
+			console.error('Error picking image:', error);
+		}
+	};
 	const handledelete = async (po) => {
 		const postRef = doc(db, 'posts', 'homepagepostovi'); // Reference to the document containing the post collection
 
@@ -158,7 +180,7 @@ function FriendsProfilePages({ navigation }) {
 	const handleLikes = async (po) => {
 		const postRef = doc(db, 'posts', 'homepagepostovi');
 
-		const postRef2 = doc(db, 'profilepages', data.user.uid);
+		const postRef2 = doc(db, 'profilepages', curruser.uid);
 		try {
 			const docRef = doc(db, 'likes', po.uid + curruser.uid); // Replace 'uniqot' with the document ID you want to fetch
 			const docSnap = await getDoc(docRef);
@@ -204,7 +226,7 @@ function FriendsProfilePages({ navigation }) {
 		}
 	};
 	const handlereplys = async (po) => {
-		const postRef2 = doc(db, 'profilepages', data.user.uid);
+		const postRef2 = doc(db, 'profilepages', curruser.uid);
 		await updateDoc(postRef2, {
 			profileinfos: profilepost.map((propostItem) =>
 				propostItem.uid === po.uid
@@ -217,7 +239,7 @@ function FriendsProfilePages({ navigation }) {
 	const handlesend = async (po) => {
 		if (!reply && !novfile) {
 			console.log('Kurtashak');
-			const postRef = doc(db, 'profilepages', data.user.uid);
+			const postRef = doc(db, 'profilepages', curruser.uid);
 			await updateDoc(postRef, {
 				profileinfos: post.map((propostItem) =>
 					propostItem.uid === po.uid
@@ -228,7 +250,7 @@ function FriendsProfilePages({ navigation }) {
 			return;
 		}
 		const postRef2 = doc(db, 'posts', 'homepagepostovi');
-		const postRef3 = doc(db, 'profilepages', data.user.uid);
+		const postRef3 = doc(db, 'profilepages', curruser.uid);
 
 		try {
 			if (!novfile) {
@@ -398,7 +420,7 @@ function FriendsProfilePages({ navigation }) {
 	};
 
 	const handlecancel = async (po) => {
-		const postRef = doc(db, 'profilepages', data.user.uid);
+		const postRef = doc(db, 'profilepages', curruser.uid);
 		await updateDoc(postRef, {
 			profileinfos: profilepost.map((propostItem) =>
 				propostItem.uid === po.uid
@@ -406,33 +428,6 @@ function FriendsProfilePages({ navigation }) {
 					: propostItem
 			),
 		});
-	};
-	const pickImage = async () => {
-		// No permissions request is necessary for launching the image library
-		try {
-			let result = await ImagePicker.launchImageLibraryAsync({
-				mediaTypes: ImagePicker.MediaTypeOptions.All,
-				allowsEditing: true,
-				aspect: [4, 3],
-				quality: 1,
-			});
-
-			console.log(result);
-
-			if (!result.canceled) {
-				const response = await fetch(result.assets[0].uri);
-
-				if (!response.ok) {
-					throw new Error('Failed to fetch image');
-				}
-
-				const blob = await response.blob();
-				console.log('fechna');
-				setNovfile(blob);
-			}
-		} catch (error) {
-			console.error('Error picking image:', error);
-		}
 	};
 	const handleSearch = async (po) => {
 		try {
@@ -449,6 +444,7 @@ function FriendsProfilePages({ navigation }) {
 
 				// Reset error state if user is found
 			}
+			console.log(user);
 		} catch (error) {
 			console.error('Error during search:', error);
 		}
@@ -458,32 +454,22 @@ function FriendsProfilePages({ navigation }) {
 			source={require('./image/background2.png')}
 			style={{ flex: 1, resizeMode: 'cover', width: '100%', height: '100%' }}
 		>
-			<ScrollView
-				contentContainerStyle={styles.userProfilePage}
-				showsVerticalScrollIndicator={false}
-			>
+			<ScrollView contentContainerStyle={styles.userProfilePage}>
 				<ImageBackground
 					source={require('./image/cover.png')}
 					style={{ flex: 1, resizeMode: 'cover' }}
 				>
 					<View style={styles.background}>
-						<Image source={data.user.photoURL} style={styles.deProfilePhoto} />
+						<Image source={curruser.photoURL} style={styles.deProfilePhoto} />
 						<Text>
 							<Text style={{ fontWeight: 'bold', fontSize: 18 }}>
-								{data.user.displayName}
+								{curruser.displayName}
 							</Text>
 						</Text>
-						{data.user.uid != curruser.uid && (
-							<TouchableOpacity onPress={() => navigation.navigate('Chats')}>
-								<Image
-									source={require('./image/message.png')}
-									style={styles.icon}
-								/>
-							</TouchableOpacity>
-						)}
 					</View>
 				</ImageBackground>
-				<ScrollView showsVerticalScrollIndicator={false}>
+
+				<ScrollView>
 					{profilepost &&
 						profilepost
 							.sort((b, a) => a.date - b.date)
@@ -546,7 +532,7 @@ function FriendsProfilePages({ navigation }) {
 														/>
 													</TouchableOpacity>
 												)}
-												<Text style={{ marginBottom: 5 }}>{po.count}</Text>
+												<Text style={{ marginBottom: 8 }}>{po.count}</Text>
 												{po.senderId === curruser.uid && (
 													<TouchableOpacity onPress={() => handledelete(po)}>
 														<Image
@@ -668,11 +654,17 @@ const styles = StyleSheet.create({
 		width: 150,
 		height: 150,
 	},
+	searchimg3: {
+		width: 30,
+		height: 30,
+		borderRadius: 25,
+		marginRight: 4,
+		resizeMode: 'cover', // React Native equivalent for object-fit
+	},
 	background: {
 		display: 'flex',
 		width: 400,
-		height: 250,
-		gap: 6,
+		height: 200,
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignItems: 'center',
@@ -681,21 +673,16 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 		flexDirection: 'column',
 	},
-	icon: {
-		height: 35,
-		width: 100,
-	},
-	borderhomepage: {
-		display: 'flex', // React Native uses 'flex' instead of 'display: flex'
+	borderhomepage2: {
+		display: 'flex',
 		marginLeft: 20,
 		marginTop: 20,
+		marginBottom: 20,
 		borderRadius: 20,
-		flexDirection: 'column', // Flex direction is specified as a string in React Native
-		backgroundColor: '#fff',
+		backgroundColor: '#254257',
 		width: 300,
-		height: 100,
-		borderWidth: 1,
-		borderColor: 'gray',
+		flexDirection: 'column',
+		maxHeight: '100%', // max-content doesn't have a direct equivalent, so using maxHeight as an approximation
 	},
 	homepage2: {
 		display: 'flex',
@@ -758,8 +745,8 @@ const styles = StyleSheet.create({
 	},
 	postdetails: {
 		flexDirection: 'row',
-		marginTop: 10,
 		marginLeft: 10,
+		marginTop: 10,
 	},
 	datenname: {
 		flexDirection: 'column',
@@ -778,8 +765,8 @@ const styles = StyleSheet.create({
 	postbutton2: {
 		flexDirection: 'row', // Horizontal layout
 		alignItems: 'flex-end',
-		justifyContent: 'flex-end', // Align items in the center vertically
-		padding: 5,
+		justifyContent: 'flex-end',
+		padding: 5, // Align items in the center vertically
 		gap: 5,
 	},
 	postreply: {
@@ -819,14 +806,8 @@ const styles = StyleSheet.create({
 	searchimg2: {
 		width: 30,
 		height: 30,
+		margin: 2,
 		borderRadius: 25,
-		resizeMode: 'cover', // React Native equivalent for object-fit
-	},
-	searchimg3: {
-		width: 30,
-		height: 30,
-		borderRadius: 25,
-		marginRight: 4,
 		resizeMode: 'cover', // React Native equivalent for object-fit
 	},
 	add: {
@@ -834,4 +815,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default FriendsProfilePages;
+export default UserProfilePage;
