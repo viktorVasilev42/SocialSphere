@@ -1020,20 +1020,20 @@ const styles = StyleSheet.create({
 		height: 30,
 		borderRadius: 25,
 		marginRight: 4,
-		resizeMode: 'cover', // React Native equivalent for object-fit
+		resizeMode: 'cover', 
 	},
 	icons: {
 		width: 35,
 		height: 35,
 		borderRadius: 25,
-		resizeMode: 'cover', // React Native equivalent for object-fit
+		resizeMode: 'cover', 
 	},
 	borderhomepage: {
-		display: 'flex', // React Native uses 'flex' instead of 'display: flex'
+		display: 'flex', 
 		marginLeft: 20,
 		marginTop: 20,
 		borderRadius: 20,
-		flexDirection: 'column', // Flex direction is specified as a string in React Native
+		flexDirection: 'column', 
 		backgroundColor: '#254257',
 		width: 300,
 		height: 100,
@@ -1069,16 +1069,14 @@ const styles = StyleSheet.create({
 	searchimg: {
 		width: 50,
 		height: 50,
-		borderRadius: 25, // React Native uses radius, not percentage
+		borderRadius: 25,
 		resizeMode: 'cover',
-		// There is no 'cursor' property in React Native
 	},
 	searchimg: {
 		width: 50,
 		height: 50,
-		borderRadius: 25, // React Native uses radius, not percentage
+		borderRadius: 25, 
 		resizeMode: 'cover',
-		// There is no 'cursor' property in React Native
 	},
 	borderhomepage2: {
 		display: 'flex',
@@ -1089,7 +1087,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#254257',
 		width: 305,
 		flexDirection: 'column',
-		maxHeight: '100%', // max-content doesn't have a direct equivalent, so using maxHeight as an approximation
+		height: 'full',
 	},
 	count: {
 		marginTop: 2,
@@ -1125,14 +1123,14 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	postbutton: {
-		flexDirection: 'column', // Horizontal layout
-		alignItems: 'flex-end', // Align items in the center vertically
+		flexDirection: 'column',
+		alignItems: 'flex-end', 
 	},
 	postbutton2: {
-		flexDirection: 'row', // Horizontal layout
+		flexDirection: 'row',
 		alignItems: 'flex-end',
 		justifyContent: 'flex-end',
-		padding: 5, // Align items in the center vertically
+		padding: 5,
 		gap: 5,
 	},
 	postreply: {
@@ -1165,7 +1163,7 @@ const styles = StyleSheet.create({
 		marginBottom: 0,
 		maxWidth: '60%',
 		marginTop: 0,
-		maxHeight: '100%', // Equivalent to max-content
+		maxHeight: '100%',
 		wordWrap: 'break-word',
 		overflowWrap: 'break-word',
 	},
@@ -1174,14 +1172,14 @@ const styles = StyleSheet.create({
 		height: 30,
 		margin: 2,
 		borderRadius: 25,
-		resizeMode: 'cover', // React Native equivalent for object-fit
+		resizeMode: 'cover',
 	},
 	messagesicon: {
 		width: 50,
 		height: 50,
 		margin: 2,
 		borderRadius: 25,
-		resizeMode: 'cover', // React Native equivalent for object-fit
+		resizeMode: 'cover', 
 	},
 	add: {
 		height: 100,

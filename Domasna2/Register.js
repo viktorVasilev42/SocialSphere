@@ -331,8 +331,7 @@ const styles = {
 		borderColor: '#fff',
 		borderRadius: 20,
 		paddingHorizontal: 10,
-		elevation: 5, // This will add a shadow to the button in Android
-		// Add shadows for iOS
+		elevation: 5, 
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.8,
@@ -348,8 +347,7 @@ const styles = {
 		borderRadius: 20,
 		paddingHorizontal: 10,
 		marginVertical: 10,
-		elevation: 5, // This will add a shadow to the button in Android
-		// Add shadows for iOS
+		elevation: 5, 
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.8,
@@ -389,8 +387,7 @@ const styles = {
 		alignItems: 'center',
 		padding: 10,
 		marginVertical: 10,
-		elevation: 5, // This will add a shadow to the button in Android
-		// Add shadows for iOS
+		elevation: 5, 
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.8,
@@ -416,8 +413,7 @@ const styles = {
 		alignItems: 'center',
 		padding: 10,
 		marginVertical: 10,
-		elevation: 5, // This will add a shadow to the button in Android
-		// Add shadows for iOS
+		elevation: 5,
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.8,

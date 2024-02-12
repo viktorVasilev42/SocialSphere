@@ -138,8 +138,7 @@ const styles = StyleSheet.create({
 		marginVertical: 10,
 		color: '#fff',
 		backgroundColor: '#254257',
-		elevation: 5, // This will add a shadow to the button in Android
-		// Add shadows for iOS
+		elevation: 5, 
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.8,
@@ -156,8 +155,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		padding: 10,
 		marginVertical: 10,
-		elevation: 5, // This will add a shadow to the button in Android
-		// Add shadows for iOS
+		elevation: 5, 
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.8,
@@ -183,8 +181,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		padding: 10,
 		marginVertical: 10,
-		elevation: 5, // This will add a shadow to the button in Android
-		// Add shadows for iOS
+		elevation: 5, 
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.8,
