@@ -7,6 +7,7 @@ import {
 	Image,
 	ImageBackground,
 	Picker,
+	Modal,
 } from 'react-native';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth, storage, db } from './firebase';
@@ -23,10 +24,11 @@ function Register({ navigation }) {
 	const [displaySurrName, setDisplaySurrName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const [gender, setGender] = useState('male'); // Assuming a default value
+	const [gender, setGender] = useState(''); // Assuming a default value
 	const [file, setFile] = useState(null);
 	const [err, setErr] = useState(false);
 	const [dali, setDali] = useState(false);
+	const [showPicker, setShowPicker] = useState(false);
 
 	const [loaded] = useFonts({
 		InnerBeauty: require('./assets/fonts/InnerBeauty-nRKaV.ttf'),
@@ -117,7 +119,7 @@ function Register({ navigation }) {
 				const profileData = {
 					displayName,
 				};
-				const defaultPhotoURL = gender === 'male' ? Add3 : Add5;
+				const defaultPhotoURL = gender == 'Male' ? Add3 : Add5;
 				profileData.photoURL = defaultPhotoURL;
 				console.log('Profile Data:', profileData);
 				await updateProfile(res.user, profileData);
@@ -145,7 +147,10 @@ function Register({ navigation }) {
 		setDali(false);
 		navigation.navigate('HomePage');
 	};
-
+	const handleSelect = (value) => {
+		setGender(value);
+		setShowPicker(false);
+	};
 	return (
 		<ImageBackground
 			source={require('./image/background.png')}
@@ -207,12 +212,33 @@ function Register({ navigation }) {
 						value={password}
 						onChangeText={(text) => setPassword(text)}
 					/>
-					<TextInput
-						style={styles.input}
-						placeholder="gender"
-						value={gender}
-						onChangeText={(text) => setGender(text)}
-					/>
+					<View>
+						<TouchableOpacity
+							style={[styles.input, styles.selectField]}
+							onPress={() => setShowPicker(true)}
+						>
+							<Text style={{ color: '#ffff' }}>
+								{gender ? gender : 'Select Gender'}
+							</Text>
+						</TouchableOpacity>
+						<Modal
+							visible={showPicker}
+							animationType="slide"
+							transparent={true}
+							onRequestClose={() => setShowPicker(false)}
+						>
+							<View style={styles.modal}>
+								<View style={styles.pickerContainer}>
+									<TouchableOpacity onPress={() => handleSelect('Male')}>
+										<Text>Male</Text>
+									</TouchableOpacity>
+									<TouchableOpacity onPress={() => handleSelect('Female')}>
+										<Text>Female</Text>
+									</TouchableOpacity>
+								</View>
+							</View>
+						</Modal>
+					</View>
 
 					<TouchableOpacity style={styles.button} onPress={handlesubmit}>
 						<Text style={styles.buttonText}>Save</Text>
@@ -248,6 +274,21 @@ const styles = {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
+	},
+	selectField: {
+		justifyContent: 'center',
+	},
+	modal: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+	},
+	pickerContainer: {
+		backgroundColor: 'white',
+		padding: 20,
+		borderRadius: 10,
+		elevation: 5,
 	},
 	pomosen: {
 		flexDirection: 'row',
