@@ -118,7 +118,7 @@ function Searchbar({ navigation }) {
 					onPress={() => handleSelect(user)}
 				>
 					<View style={styles.searchimgContainer}>
-						<Image source={user.photoURL} style={styles.searchimg} />
+						<Image source={{ uri: user.photoURL }} style={styles.searchimg} />
 					</View>
 					<View style={styles.displayNameContainer}>
 						<Text style={styles.displayName}>{user.displayName}</Text>

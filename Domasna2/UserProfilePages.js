@@ -239,7 +239,6 @@ function UserProfilePage({ navigation }) {
 
 	const handlesend = async (po) => {
 		if (!reply && !novfile) {
-			console.log('Kurtashak');
 			const postRef = doc(db, 'profilepages', curruser.uid);
 			await updateDoc(postRef, {
 				profileinfos: post.map((propostItem) =>
@@ -464,7 +463,10 @@ function UserProfilePage({ navigation }) {
 					style={{ flex: 1, resizeMode: 'cover' }}
 				>
 					<View style={styles.background}>
-						<Image source={curruser.photoURL} style={styles.deProfilePhoto} />
+						<Image
+							source={{ uri: curruser.photoURL }}
+							style={styles.deProfilePhoto}
+						/>
 						<Text>
 							<Text style={{ fontWeight: 'bold', fontSize: 18 }}>
 								{curruser.displayName}
@@ -482,7 +484,10 @@ function UserProfilePage({ navigation }) {
 									<View style={styles.postdetails}>
 										<View style={styles.spanslika}>
 											<TouchableOpacity onPress={() => handleSearch(po)}>
-												<Image source={po.photoURL} style={styles.searchimg} />
+												<Image
+													source={{ uri: po.photoURL }}
+													style={styles.searchimg}
+												/>
 											</TouchableOpacity>
 										</View>
 										<View style={styles.datenname}>
@@ -563,7 +568,7 @@ function UserProfilePage({ navigation }) {
 													>
 														<View style={{ flexDirection: 'row' }}>
 															<Image
-																source={curruser.photoURL}
+																source={{ uri: curruser.photoURL }}
 																style={styles.searchimg3}
 															/>
 															<TextInput
@@ -610,7 +615,7 @@ function UserProfilePage({ navigation }) {
 													>
 														<TouchableOpacity onPress={() => handleSearch(rep)}>
 															<Image
-																source={rep.photoURL}
+																source={{ uri: rep.photoURL }}
 																style={styles.searchimg2}
 															/>
 														</TouchableOpacity>
@@ -662,6 +667,8 @@ const styles = StyleSheet.create({
 		width: 120,
 		height: 120,
 		marginTop: 30,
+		resizeMode: 'cover',
+		borderRadius: 60,
 	},
 	searchimg3: {
 		width: 30,
@@ -718,6 +725,7 @@ const styles = StyleSheet.create({
 		width: 175,
 		height: 135,
 		borderRadius: 10,
+		marginLeft: 10,
 	},
 	searchimg: {
 		width: 50,
@@ -781,10 +789,9 @@ const styles = StyleSheet.create({
 	postreply: {
 		flexDirection: 'row',
 		backgroundColor: '#38607c',
-		marginTop: 10,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginLeft: 5,
+		marginBottom: 10,
 		width: 304,
 		height: 50,
 	},
@@ -800,6 +807,7 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		flexDirection: 'row',
 		marginBottom: 10,
+		gap: 3,
 	},
 	chatbubble: {
 		paddingHorizontal: 10,

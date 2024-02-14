@@ -23,14 +23,11 @@ function Register({ navigation }) {
 	const [displaySurrName, setDisplaySurrName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const [gender, setGender] = useState('Male'); // Assuming a default value
+	const [gender, setGender] = useState('Male');
 	const [file, setFile] = useState(null);
 	const [err, setErr] = useState(false);
-	const [dali, setDali] = useState(false);
 	const [showPicker, setShowPicker] = useState(false);
-
 	const pickImage = async () => {
-		// No permissions request is necessary for launching the image library
 		try {
 			let result = await ImagePicker.launchImageLibraryAsync({
 				mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -64,7 +61,6 @@ function Register({ navigation }) {
 			const storageRef = ref(storage, displayName);
 
 			if (file) {
-				setDali(true);
 				const uploadTask = uploadBytesResumable(storageRef, file);
 				uploadTask.on(
 					'state_changed',
@@ -88,7 +84,6 @@ function Register({ navigation }) {
 								displayName,
 								displaySurrName,
 								email,
-								daliuri: dali,
 								photoURL: profileData.photoURL,
 							});
 
@@ -109,7 +104,10 @@ function Register({ navigation }) {
 				const profileData = {
 					displayName,
 				};
-				const defaultPhotoURL = gender == 'Male' ? Add3 : Add5;
+				const defaultPhotoURL =
+					gender == 'Male'
+						? 'https://firebasestorage.googleapis.com/v0/b/labmis-1c6c2.appspot.com/o/pp_1%404x.png?alt=media&token=dbd4a251-4fd2-4e85-93bf-a0af91fb06a6'
+						: 'https://firebasestorage.googleapis.com/v0/b/labmis-1c6c2.appspot.com/o/pp_2%404x.png?alt=media&token=db283f8e-5356-472f-8370-414617104897';
 				profileData.photoURL = defaultPhotoURL;
 				console.log('Profile Data:', profileData);
 				await updateProfile(res.user, profileData);
@@ -120,7 +118,6 @@ function Register({ navigation }) {
 					displayName,
 					displaySurrName,
 					email,
-					daliuri: dali,
 					photoURL: updatedUser.photoURL || profileData.photoURL,
 				});
 
@@ -134,7 +131,6 @@ function Register({ navigation }) {
 			console.error('Error creating user:', authError);
 			setErr(true);
 		}
-		setDali(false);
 		navigation.navigate('HomePage');
 	};
 	const handleSelect = (value) => {
@@ -325,7 +321,7 @@ const styles = {
 		backgroundColor: '#254257',
 	},
 	input1: {
-		width: 225,
+		width: 229,
 		height: 40,
 		borderColor: '#fff',
 		borderRadius: 20,

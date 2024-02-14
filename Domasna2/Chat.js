@@ -31,11 +31,12 @@ function Chat({ message }) {
 				}
 			>
 				<Image
-					source={
-						message.senderId === curruser.uid
-							? curruser.photoURL
-							: data.user.photoURL
-					}
+					source={{
+						uri:
+							message.senderId === curruser.uid
+								? curruser.photoURL
+								: data.user.photoURL,
+					}}
 					style={styles.prvaslika}
 				/>
 				{message.text && (

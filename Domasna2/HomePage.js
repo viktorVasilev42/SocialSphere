@@ -8,6 +8,7 @@ import {
 	ScrollView,
 	StyleSheet,
 	Touchable,
+	Dimensions,
 	ImageBackground,
 } from 'react-native';
 import Sidebar from './Sidebar';
@@ -145,7 +146,7 @@ function HomePage({ navigation }) {
 		}
 	}, []);
 	useEffect(() => {
-		console.log(curruser.daliuri);
+		console.log(height);
 	}, []);
 	const pickImage = async () => {
 		// No permissions request is necessary for launching the image library
@@ -724,7 +725,10 @@ function HomePage({ navigation }) {
 						<View style={styles.homepage2}>
 							<View style={styles.spanslika}>
 								<TouchableOpacity onPress={handleprofile}>
-									<Image source={curruser.photoURL} style={styles.searchimg} />
+									<Image
+										source={{ uri: curruser.photoURL }}
+										style={styles.searchimg}
+									/>
 								</TouchableOpacity>
 								<View style={{ alignItems: 'center' }}>
 									<Text style={{ fontWeight: 'bold' }}>
@@ -764,7 +768,7 @@ function HomePage({ navigation }) {
 											<View style={styles.spanslika}>
 												<TouchableOpacity onPress={() => handleSearch(po)}>
 													<Image
-														source={po.photoURL}
+														source={{ uri: po.photoURL }}
 														style={styles.searchimg}
 													/>
 												</TouchableOpacity>
@@ -844,7 +848,7 @@ function HomePage({ navigation }) {
 														>
 															<View style={{ flexDirection: 'row' }}>
 																<Image
-																	source={curruser.photoURL}
+																	source={{ uri: curruser.photoURL }}
 																	style={styles.searchimg3}
 																/>
 																<TextInput
@@ -895,7 +899,7 @@ function HomePage({ navigation }) {
 																onPress={() => handleSearch(rep)}
 															>
 																<Image
-																	source={rep.photoURL}
+																	source={{ uri: rep.photoURL }}
 																	style={styles.searchimg2}
 																/>
 															</TouchableOpacity>
@@ -917,7 +921,11 @@ function HomePage({ navigation }) {
 																{rep.img && (
 																	<Image
 																		source={{ uri: rep.img }}
-																		style={{ width: 65, height: 50 }}
+																		style={{
+																			width: 65,
+																			height: 50,
+																			borderRadius: 10,
+																		}}
 																	/>
 																)}
 																<Text style={{ fontSize: 9, paddingBottom: 2 }}>
@@ -933,7 +941,7 @@ function HomePage({ navigation }) {
 				</ScrollView>
 				<View
 					style={{
-						flex: 1,
+						flex: width > 400 ? 1 : 2,
 						height: '100%',
 						backgroundColor: '#254257',
 						alignItems: 'center',
@@ -975,7 +983,7 @@ function HomePage({ navigation }) {
 										onPress={() => handlemessages(chat[1].userInfo)}
 									>
 										<Image
-											source={chat[1].userInfo.photoURL}
+											source={{ uri: chat[1].userInfo.photoURL }}
 											style={styles.icons}
 										/>
 									</TouchableOpacity>
@@ -1018,6 +1026,7 @@ function HomePage({ navigation }) {
 		</ImageBackground>
 	);
 }
+const { width, height } = Dimensions.get('window');
 const styles = StyleSheet.create({
 	homepage: {
 		flexDirection: 'column',
@@ -1074,6 +1083,7 @@ const styles = StyleSheet.create({
 	postimage: {
 		width: 175,
 		height: 135,
+		marginLeft: 10,
 		borderRadius: 10,
 	},
 	searchimg: {
@@ -1146,10 +1156,9 @@ const styles = StyleSheet.create({
 	postreply: {
 		flexDirection: 'row',
 		backgroundColor: '#38607c',
-		marginTop: 10,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginLeft: 5,
+		marginBottom: 10,
 		width: 304,
 		height: 50,
 	},
@@ -1165,6 +1174,7 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		flexDirection: 'row',
 		marginBottom: 10,
+		gap: 3,
 	},
 	chatbubble: {
 		paddingHorizontal: 10,

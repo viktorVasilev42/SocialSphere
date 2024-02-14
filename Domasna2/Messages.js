@@ -53,7 +53,7 @@ function Messages() {
 							onPress={() => handleselect(chat[1].userInfo)}
 						>
 							<Image
-								source={chat[1].userInfo.photoURL}
+								source={{ uri: chat[1].userInfo.photoURL }}
 								style={styles.searchimg}
 							/>
 							<View style={styles.usechatinfo}>
