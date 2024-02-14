@@ -77,24 +77,24 @@ const styles = StyleSheet.create({
 		borderColor: '#fff',
 		padding: 5,
 		height: 100,
-		flexDirection: 'row', // Make it a row
-		alignItems: 'center', // Center items vertically
-		justifyContent: 'flex-start', // Align items to the start (left side)
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'flex-start',
 	},
 	searchimg: {
 		width: 70,
 		height: 70,
 		borderRadius: 25,
-		marginRight: 10, // Add margin to the right of the image
+		marginRight: 10,
 	},
 	usechatinfo: {
-		flexDirection: 'column', // Make it a column
-		justifyContent: 'center', // Center items vertically
+		flexDirection: 'column',
+		justifyContent: 'center',
 	},
 	displayName: {
 		fontSize: 18,
 		fontWeight: 'bold',
-		color: 'white', // Optional: Set text color
+		color: 'white',
 	},
 });
 

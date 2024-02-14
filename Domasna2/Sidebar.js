@@ -27,9 +27,10 @@ function Sidebar({ navigation }) {
 }
 const styles = StyleSheet.create({
 	sidebar: {
+		flex: 1,
 		flexDirection: 'column',
-		height: '100%',
 		backgroundColor: '#254257',
+		height: '100%',
 	},
 });
 export default Sidebar;

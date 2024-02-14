@@ -97,7 +97,6 @@ const styles = StyleSheet.create({
 		marginBottom: 5,
 		maxWidth: '30%',
 		alignItems: 'flex-start',
-		overflowWrap: 'break-word',
 	},
 	messageinfotext2: {
 		backgroundColor: '#9183ba',

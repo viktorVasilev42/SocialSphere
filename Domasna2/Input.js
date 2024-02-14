@@ -167,14 +167,13 @@ const styles = StyleSheet.create({
 		width: '100%',
 		flexDirection: 'row',
 		alignItems: 'center',
-		gap: 15,
 		justifyContent: 'space-between',
 	},
 	input: {
 		borderRadius: 10,
 		backgroundColor: '#254257',
 		padding: 5,
-		width: 250,
+		width: '67%',
 	},
 	sendContainer: {
 		flexDirection: 'row',

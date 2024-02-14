@@ -93,7 +93,6 @@ function Searchbar({ navigation }) {
 		<View
 			style={{
 				flexDirection: 'column',
-				width: 'full',
 				justifyContent: 'center',
 			}}
 		>
@@ -135,12 +134,12 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		resizeMode: 'cover',
 		width: 'full',
-		height: 85,
+		height: 140,
 	},
 	searchform: {
 		padding: 10,
 		width: 'full',
-		height: 60,
+		height: 150,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},

@@ -27,6 +27,7 @@ import {
 import { db, storage } from './firebase';
 import moment from 'moment/moment';
 import { ChatContext } from './context/ChatContext';
+import * as ImagePicker from 'expo-image-picker';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 as uuid } from 'uuid';
 
@@ -640,7 +641,11 @@ function FriendsProfilePages({ navigation }) {
 															{rep.img && (
 																<Image
 																	source={{ uri: rep.img }}
-																	style={{ width: 65, height: 50 }}
+																	style={{
+																		width: 65,
+																		height: 50,
+																		borderRadius: 10,
+																	}}
 																/>
 															)}
 															<Text style={{ fontSize: 9, paddingBottom: 2 }}>
@@ -665,8 +670,9 @@ const styles = StyleSheet.create({
 		borderTopLeftRadius: 7,
 	},
 	deProfilePhoto: {
-		width: 150,
-		height: 150,
+		marginTop: 20,
+		width: 120,
+		height: 120,
 	},
 	background: {
 		display: 'flex',
@@ -720,6 +726,7 @@ const styles = StyleSheet.create({
 	},
 	postimage: {
 		width: 175,
+		borderRadius: 10,
 		height: 135,
 	},
 	searchimg: {

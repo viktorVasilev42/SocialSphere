@@ -145,7 +145,7 @@ function HomePage({ navigation }) {
 		}
 	}, []);
 	useEffect(() => {
-		console.log(curruser);
+		console.log(curruser.daliuri);
 	}, []);
 	const pickImage = async () => {
 		// No permissions request is necessary for launching the image library
@@ -700,7 +700,10 @@ function HomePage({ navigation }) {
 			),
 		});
 	};
-
+	const handlemessages = (u) => {
+		dispatch({ type: 'CHANGE_USER', payload: u });
+		navigation.navigate('Chats');
+	};
 	return (
 		<ImageBackground
 			source={require('./image/background.png')}
@@ -708,8 +711,8 @@ function HomePage({ navigation }) {
 		>
 			<View style={{ flexDirection: 'row', height: '100%' }}>
 				<ScrollView
-					contentContainerStyle={styles.homepage}
 					showsVerticalScrollIndicator={false}
+					contentContainerStyle={styles.homepage}
 				>
 					<View style={styles.logoInputWrapper}>
 						<Image
@@ -751,7 +754,7 @@ function HomePage({ navigation }) {
 							</TouchableOpacity>
 						</View>
 					</View>
-					<ScrollView showsVerticalScrollIndicator={false}>
+					<View>
 						{post &&
 							post
 								.sort((b, a) => a.date - b.date)
@@ -926,7 +929,7 @@ function HomePage({ navigation }) {
 										</View>
 									</View>
 								))}
-					</ScrollView>
+					</View>
 				</ScrollView>
 				<View
 					style={{
@@ -944,6 +947,7 @@ function HomePage({ navigation }) {
 							width: 'full',
 							height: 'full',
 							backgroundColor: '#254257',
+							marginTop: 40,
 							borderRadius: 10,
 						}}
 					>
@@ -965,7 +969,11 @@ function HomePage({ navigation }) {
 							Object.entries(chats)
 								?.sort((b, a) => a[1].date - b[1].date)
 								.map((chat) => (
-									<TouchableOpacity style={styles.userchat} key={chat[0]}>
+									<TouchableOpacity
+										style={styles.userchat}
+										key={chat[0]}
+										onPress={() => handlemessages(chat[1].userInfo)}
+									>
 										<Image
 											source={chat[1].userInfo.photoURL}
 											style={styles.icons}
@@ -1013,27 +1021,28 @@ function HomePage({ navigation }) {
 const styles = StyleSheet.create({
 	homepage: {
 		flexDirection: 'column',
-		height: '100%',
+		height: 'full',
+		marginTop: 40,
 	},
 	searchimg3: {
 		width: 30,
 		height: 30,
 		borderRadius: 25,
 		marginRight: 4,
-		resizeMode: 'cover', 
+		resizeMode: 'cover',
 	},
 	icons: {
 		width: 35,
 		height: 35,
 		borderRadius: 25,
-		resizeMode: 'cover', 
+		resizeMode: 'cover',
 	},
 	borderhomepage: {
-		display: 'flex', 
+		display: 'flex',
 		marginLeft: 20,
 		marginTop: 20,
 		borderRadius: 20,
-		flexDirection: 'column', 
+		flexDirection: 'column',
 		backgroundColor: '#254257',
 		width: 300,
 		height: 100,
@@ -1065,6 +1074,7 @@ const styles = StyleSheet.create({
 	postimage: {
 		width: 175,
 		height: 135,
+		borderRadius: 10,
 	},
 	searchimg: {
 		width: 50,
@@ -1075,7 +1085,7 @@ const styles = StyleSheet.create({
 	searchimg: {
 		width: 50,
 		height: 50,
-		borderRadius: 25, 
+		borderRadius: 25,
 		resizeMode: 'cover',
 	},
 	borderhomepage2: {
@@ -1124,7 +1134,7 @@ const styles = StyleSheet.create({
 	},
 	postbutton: {
 		flexDirection: 'column',
-		alignItems: 'flex-end', 
+		alignItems: 'flex-end',
 	},
 	postbutton2: {
 		flexDirection: 'row',
@@ -1179,7 +1189,7 @@ const styles = StyleSheet.create({
 		height: 50,
 		margin: 2,
 		borderRadius: 25,
-		resizeMode: 'cover', 
+		resizeMode: 'cover',
 	},
 	add: {
 		height: 100,

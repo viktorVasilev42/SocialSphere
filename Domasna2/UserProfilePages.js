@@ -29,6 +29,7 @@ import moment from 'moment/moment';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 as uuid } from 'uuid';
 import { ChatContext } from './context/ChatContext';
+import * as ImagePicker from 'expo-image-picker';
 
 function UserProfilePage({ navigation }) {
 	const [reply, setReply] = useState('');
@@ -454,7 +455,10 @@ function UserProfilePage({ navigation }) {
 			source={require('./image/background2.png')}
 			style={{ flex: 1, resizeMode: 'cover', width: '100%', height: '100%' }}
 		>
-			<ScrollView contentContainerStyle={styles.userProfilePage}>
+			<ScrollView
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={styles.userProfilePage}
+			>
 				<ImageBackground
 					source={require('./image/cover.png')}
 					style={{ flex: 1, resizeMode: 'cover' }}
@@ -469,7 +473,7 @@ function UserProfilePage({ navigation }) {
 					</View>
 				</ImageBackground>
 
-				<ScrollView>
+				<View>
 					{profilepost &&
 						profilepost
 							.sort((b, a) => a.date - b.date)
@@ -626,7 +630,11 @@ function UserProfilePage({ navigation }) {
 															{rep.img && (
 																<Image
 																	source={{ uri: rep.img }}
-																	style={{ width: 65, height: 50 }}
+																	style={{
+																		width: 65,
+																		height: 50,
+																		borderRadius: 10,
+																	}}
 																/>
 															)}
 															<Text style={{ fontSize: 9, paddingBottom: 2 }}>
@@ -638,7 +646,7 @@ function UserProfilePage({ navigation }) {
 									</View>
 								</View>
 							))}
-				</ScrollView>
+				</View>
 			</ScrollView>
 		</ImageBackground>
 	);
@@ -651,15 +659,16 @@ const styles = StyleSheet.create({
 		borderTopLeftRadius: 7,
 	},
 	deProfilePhoto: {
-		width: 150,
-		height: 150,
+		width: 120,
+		height: 120,
+		marginTop: 30,
 	},
 	searchimg3: {
 		width: 30,
 		height: 30,
 		borderRadius: 25,
 		marginRight: 4,
-		resizeMode: 'cover', 
+		resizeMode: 'cover',
 	},
 	background: {
 		display: 'flex',
@@ -708,11 +717,12 @@ const styles = StyleSheet.create({
 	postimage: {
 		width: 175,
 		height: 135,
+		borderRadius: 10,
 	},
 	searchimg: {
 		width: 50,
 		height: 50,
-		borderRadius: 25, 
+		borderRadius: 25,
 		resizeMode: 'cover',
 	},
 	borderhomepage2: {
@@ -724,7 +734,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#254257',
 		width: 305,
 		flexDirection: 'column',
-		maxHeight: '100%', 
+		maxHeight: '100%',
 	},
 	count: {
 		marginTop: 2,
@@ -758,8 +768,8 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	postbutton: {
-		flexDirection: 'column', 
-		alignItems: 'flex-end', 
+		flexDirection: 'column',
+		alignItems: 'flex-end',
 	},
 	postbutton2: {
 		flexDirection: 'row',

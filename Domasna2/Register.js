@@ -17,27 +17,17 @@ import Add3 from './image/Testot.png';
 import Add5 from './image/Sina.png';
 import * as ImagePicker from 'expo-image-picker';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useFonts } from 'expo-font';
 
 function Register({ navigation }) {
 	const [displayName, setDisplayName] = useState('');
 	const [displaySurrName, setDisplaySurrName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const [gender, setGender] = useState(''); // Assuming a default value
+	const [gender, setGender] = useState('Male'); // Assuming a default value
 	const [file, setFile] = useState(null);
 	const [err, setErr] = useState(false);
 	const [dali, setDali] = useState(false);
 	const [showPicker, setShowPicker] = useState(false);
-
-	const [loaded] = useFonts({
-		InnerBeauty: require('./assets/fonts/InnerBeauty-nRKaV.ttf'),
-	});
-
-	if (!loaded) {
-		// Font is still loading, you can return a loading indicator or null
-		return null;
-	}
 
 	const pickImage = async () => {
 		// No permissions request is necessary for launching the image library
@@ -156,11 +146,8 @@ function Register({ navigation }) {
 			source={require('./image/background.png')}
 			style={{ flex: 1, resizeMode: 'cover', width: '100%', height: '100%' }}
 		>
-			<View style={styles.container}>
-				<ScrollView
-					contentContainerStyle={styles.formWrapper}
-					showsVerticalScrollIndicator={false}
-				>
+			<ScrollView contentContainerStyle={styles.container}>
+				<View style={styles.formWrapper} showsVerticalScrollIndicator={false}>
 					<View style={styles.logoInputWrapper}>
 						<Image
 							style={styles.logoicon}
@@ -169,10 +156,7 @@ function Register({ navigation }) {
 					</View>
 					<View style={styles.pomosen}>
 						<View style={styles.fileInputWrapper}>
-							<TouchableOpacity
-								style={styles.fileInputWrapper}
-								onPress={pickImage}
-							>
+							<TouchableOpacity onPress={pickImage}>
 								<Image
 									style={styles.fileInputIcon}
 									source={require('./image/photo_icon.png')}
@@ -255,8 +239,8 @@ function Register({ navigation }) {
 					>
 						<Text style={styles.buttonText}>Login</Text>
 					</TouchableOpacity>
-				</ScrollView>
-			</View>
+				</View>
+			</ScrollView>
 		</ImageBackground>
 	);
 }
@@ -267,7 +251,6 @@ const styles = {
 		padding: 20,
 		gap: 10,
 		borderRadius: 10,
-		fontFamily: 'InnerBeauty',
 		alignItems: 'center',
 	},
 	container: {
@@ -292,9 +275,10 @@ const styles = {
 	},
 	pomosen: {
 		flexDirection: 'row',
+		justifyContent: 'center',
 		alignItems: 'center',
 		paddingHorizontal: 20,
-		width: '90%',
+		width: '100%',
 	},
 	pomosen1: {
 		flexDirection: 'column',
@@ -331,7 +315,7 @@ const styles = {
 		borderColor: '#fff',
 		borderRadius: 20,
 		paddingHorizontal: 10,
-		elevation: 5, 
+		elevation: 5,
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.8,
@@ -341,13 +325,13 @@ const styles = {
 		backgroundColor: '#254257',
 	},
 	input1: {
-		width: 215,
+		width: 225,
 		height: 40,
 		borderColor: '#fff',
 		borderRadius: 20,
 		paddingHorizontal: 10,
 		marginVertical: 10,
-		elevation: 5, 
+		elevation: 5,
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.8,
@@ -387,7 +371,7 @@ const styles = {
 		alignItems: 'center',
 		padding: 10,
 		marginVertical: 10,
-		elevation: 5, 
+		elevation: 5,
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.8,

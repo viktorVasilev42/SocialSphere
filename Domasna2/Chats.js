@@ -29,7 +29,7 @@ function Chats({ navigation }) {
 		>
 			<View style={styles.chat}>
 				<View style={styles.chatInfo}>
-					<Text style={{ fontWeight: 'bold', fontSize: 18 }}>
+					<Text style={{ fontWeight: 'bold', fontSize: 18, marginTop: 30 }}>
 						{data.user?.displayName}
 					</Text>
 					<TouchableOpacity
@@ -58,10 +58,11 @@ const styles = StyleSheet.create({
 		width: 35,
 		height: 35,
 		borderRadius: 25,
+		marginTop: 30,
 		resizeMode: 'cover',
 	},
 	chatInfo: {
-		height: 50,
+		height: 80,
 		width: '100%',
 		padding: 10,
 		backgroundColor: 'rgba(0, 0, 0, 0.5)',

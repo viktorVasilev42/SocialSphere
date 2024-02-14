@@ -6,7 +6,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Login from './Login';
 import HomePage from './HomePage';
-import HomePageWithDrawer from './HomePage';
 import FriendsProfilePages from './FriendsProfilePages';
 import { AuthProvider } from './context/AuthContext';
 import { ChatContextProvider } from './context/ChatContext';
@@ -24,17 +23,50 @@ export default function App() {
 			<ChatContextProvider>
 				<NavigationContainer>
 					<Stack.Navigator initialRouteName="Sign up">
-						<Stack.Screen name="Sign up" component={Register} />
-						<Stack.Screen name="Login" component={Login} />
-						<Stack.Screen name="HomePage" component={HomePage} />
-						<Stack.Screen name="MapScreen" component={MapScreen} />
-						<Stack.Screen name="UserProfilePage" component={UserProfilePage} />
-						<Stack.Screen name="Sidebar" component={Sidebar} />
-						<Stack.Screen name="Chats" component={Chats} />
-						<Stack.Screen name="Messages" component={Messages} />
+						<Stack.Screen
+							name="Sign up"
+							component={Register}
+							options={{ headerShown: false }}
+						/>
+						<Stack.Screen
+							name="Login"
+							component={Login}
+							options={{ headerShown: false }}
+						/>
+						<Stack.Screen
+							name="HomePage"
+							component={HomePage}
+							options={{ headerShown: false }}
+						/>
+						<Stack.Screen
+							name="MapScreen"
+							component={MapScreen}
+							options={{ headerShown: false }}
+						/>
+						<Stack.Screen
+							name="UserProfilePage"
+							component={UserProfilePage}
+							options={{ headerShown: false }}
+						/>
+						<Stack.Screen
+							name="Sidebar"
+							component={Sidebar}
+							options={{ headerShown: false }}
+						/>
+						<Stack.Screen
+							name="Chats"
+							component={Chats}
+							options={{ headerShown: false }}
+						/>
+						<Stack.Screen
+							name="Messages"
+							component={Messages}
+							options={{ headerShown: false }}
+						/>
 						<Stack.Screen
 							name="FriendsProfilePages"
 							component={FriendsProfilePages}
+							options={{ headerShown: false }}
 						/>
 					</Stack.Navigator>
 				</NavigationContainer>
