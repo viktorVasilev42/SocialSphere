@@ -166,6 +166,7 @@ const styles = StyleSheet.create({
 		height: 70,
 		borderRadius: 25,
 		marginRight: 10,
+		borderRadius: 60,
 	},
 	displayNameContainer: {
 		flexDirection: 'column',

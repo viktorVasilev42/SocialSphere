@@ -11,6 +11,10 @@ import {
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './firebase';
 import { ScrollView } from 'react-native-gesture-handler';
+import {
+	widthPercentageToDP as wp,
+	heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 
 function Login({ navigation }) {
 	const [email, setEmail] = useState('');
@@ -130,7 +134,7 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	input: {
-		width: 310,
+		width: wp(78),
 		height: 40,
 		borderWidth: 1,
 		borderRadius: 20,
@@ -138,7 +142,7 @@ const styles = StyleSheet.create({
 		marginVertical: 10,
 		color: '#fff',
 		backgroundColor: '#254257',
-		elevation: 5, 
+		elevation: 5,
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.8,
@@ -155,7 +159,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		padding: 10,
 		marginVertical: 10,
-		elevation: 5, 
+		elevation: 5,
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.8,
@@ -181,7 +185,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		padding: 10,
 		marginVertical: 10,
-		elevation: 5, 
+		elevation: 5,
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.8,

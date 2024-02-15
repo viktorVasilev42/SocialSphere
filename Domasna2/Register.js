@@ -17,6 +17,10 @@ import Add3 from './image/Testot.png';
 import Add5 from './image/Sina.png';
 import * as ImagePicker from 'expo-image-picker';
 import { ScrollView } from 'react-native-gesture-handler';
+import {
+	widthPercentageToDP as wp,
+	heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 
 function Register({ navigation }) {
 	const [displayName, setDisplayName] = useState('');
@@ -192,33 +196,31 @@ function Register({ navigation }) {
 						value={password}
 						onChangeText={(text) => setPassword(text)}
 					/>
-					<View>
-						<TouchableOpacity
-							style={[styles.input, styles.selectField]}
-							onPress={() => setShowPicker(true)}
-						>
-							<Text style={{ color: '#ffff' }}>
-								{gender ? gender : 'Select Gender'}
-							</Text>
-						</TouchableOpacity>
-						<Modal
-							visible={showPicker}
-							animationType="slide"
-							transparent={true}
-							onRequestClose={() => setShowPicker(false)}
-						>
-							<View style={styles.modal}>
-								<View style={styles.pickerContainer}>
-									<TouchableOpacity onPress={() => handleSelect('Male')}>
-										<Text>Male</Text>
-									</TouchableOpacity>
-									<TouchableOpacity onPress={() => handleSelect('Female')}>
-										<Text>Female</Text>
-									</TouchableOpacity>
-								</View>
+					<TouchableOpacity
+						style={[styles.input, styles.selectField]}
+						onPress={() => setShowPicker(true)}
+					>
+						<Text style={{ color: '#ffff' }}>
+							{gender ? gender : 'Select Gender'}
+						</Text>
+					</TouchableOpacity>
+					<Modal
+						visible={showPicker}
+						animationType="slide"
+						transparent={true}
+						onRequestClose={() => setShowPicker(false)}
+					>
+						<View style={styles.modal}>
+							<View style={styles.pickerContainer}>
+								<TouchableOpacity onPress={() => handleSelect('Male')}>
+									<Text>Male</Text>
+								</TouchableOpacity>
+								<TouchableOpacity onPress={() => handleSelect('Female')}>
+									<Text>Female</Text>
+								</TouchableOpacity>
 							</View>
-						</Modal>
-					</View>
+						</View>
+					</Modal>
 
 					<TouchableOpacity style={styles.button} onPress={handlesubmit}>
 						<Text style={styles.buttonText}>Save</Text>
@@ -243,7 +245,7 @@ function Register({ navigation }) {
 
 const styles = {
 	formWrapper: {
-		width: '100%',
+		width: wp(100),
 		padding: 20,
 		gap: 10,
 		borderRadius: 10,
@@ -306,7 +308,7 @@ const styles = {
 		marginBottom: 20,
 	},
 	input: {
-		width: 310,
+		width: wp(78),
 		height: 40,
 		borderColor: '#fff',
 		borderRadius: 20,
@@ -321,7 +323,7 @@ const styles = {
 		backgroundColor: '#254257',
 	},
 	input1: {
-		width: 229,
+		width: wp(56.5),
 		height: 40,
 		borderColor: '#fff',
 		borderRadius: 20,
@@ -336,7 +338,7 @@ const styles = {
 		backgroundColor: '#254257',
 	},
 	fileInputWrapper: {
-		width: 100,
+		width: wp(25),
 		height: 100,
 		borderColor: '#ccc',
 	},
@@ -349,8 +351,8 @@ const styles = {
 		marginBottom: 15,
 	},
 	fileInputIcon: {
-		width: 100,
-		height: 100,
+		width: '100%',
+		height: '100%',
 	},
 	logoicon: {
 		width: 220,
